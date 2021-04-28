@@ -1,40 +1,50 @@
 package shoppingcart.dao;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
+
+/**
+ *
+ * create table orders
+ * (
+ *     id          bigint not null auto_increment,
+ *     customer_id bigint not null,
+ *     primary key (id)
+ * ) engine=InnoDB default charset=utf8mb4;
+ */
 @Repository
 public class OrderDao {
-    private final JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     public OrderDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Long addOrder(long customerId, long productId, int quantity) {
-        String sql = "INSERT INTO orders (customer_id, product_id, quantity) VALUES (?, ?, ?)";
+    // return : order_id
+    public Long addOrders(long customerId){
+        String sql = "INSERT INTO orders (customer_id) VALUES (?)";
         final KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(con -> {
             PreparedStatement preparedStatement = con.prepareStatement(sql, new String[]{"id"});
             preparedStatement.setLong(1, customerId);
-            preparedStatement.setLong(2, productId);
-            preparedStatement.setLong(3, quantity);
             return preparedStatement;
         }, keyHolder);
         return keyHolder.getKey().longValue();
     }
 
-    public List<OrderDto> findOrdersByCustomerId(long customerId) {
-        String sql = "SELECT product_id, quantity FROM orders WHERE customer_id = ?";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new OrderDto(
-                rs.getLong("product_id"),
-                rs.getInt("quantity")
-        ));
+    public List<Long> findOrderIdsByCustomerId(long customerId){
+        String sql = "SELECT id FROM orders WHERE customer_id = ? ";
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getLong("id"), customerId);
     }
 }
