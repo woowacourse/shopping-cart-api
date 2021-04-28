@@ -1,13 +1,19 @@
 package shoppingcart.dto;
 
-public class ProductDto {
+public class ProductResponseDto {
 
+    private final Long id;
     private final String name;
-    private final Integer price;
+    private final int price;
 
-    public ProductDto(String name, int price) {
+    public ProductResponseDto(Long id, String name, int price) {
+        this.id = id;
         this.name = name;
         this.price = price;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
@@ -17,5 +23,4 @@ public class ProductDto {
     public int getPrice() {
         return price;
     }
-
 }
