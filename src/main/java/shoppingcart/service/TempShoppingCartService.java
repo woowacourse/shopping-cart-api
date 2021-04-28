@@ -77,31 +77,19 @@ public class TempShoppingCartService {
         return cartResponseDtos;
     }
 
-
     // 코기
-    public List<CartResponseDto> findCartsByCustomerName(String name) {
+    public List<CartResponseDto> findCartsByCustomerName_temp(final String name) {
         final Long customerId = customerDao.findIdByUserName(name);
         final List<Long> cartIds = cartDao.findIdsByCustomerId(customerId);
 
-        List<CartResponseDto> cartResponseDtos = new ArrayList<>();
-
-        for (int i = 0; i < cartIds.size(); i++) {
-            final List<Long> productidsInCart = cartDao.findProductIdsByCustomerId(customerId);
-            for(int j =0; j<productidsInCart.size(); j++){
-                final ProductResponseDto productResponseDto =
-                        productDao.findProductById(productidsInCart.get(j));
-                final CartResponseDto cartResponseDto =
-                        new CartResponseDto(cartIds.get(i), productResponseDto.getId(),
-                                productResponseDto.getName(), productResponseDto.getPrice(),
-                                productResponseDto.getImageUrl());
-
-                cartResponseDtos.add(cartResponseDto);
-            }
+        final List<CartResponseDto> cartResponseDtos = new ArrayList<>();
+        for (final Long cartId : cartIds) {
+            final Long productId = cartDao.findProductIdById(cartId);
+            final ProductResponseDto product = productDao.findProductById(productId);
+            cartResponseDtos.add(new CartResponseDto(cartId, product));
         }
-        // return Dto - cartId, name, price, image_url    List<CartResponseDto>
         return cartResponseDtos;
     }
-
 
     // 장바구니 상품 추가
     public Void addCart(long productId, String name) {

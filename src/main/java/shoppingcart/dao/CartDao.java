@@ -28,6 +28,12 @@ public class CartDao {
         return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getLong("id"), customerId);
     }
 
+    public Long findProductIdById(Long cartId) {
+        String sql = "SELECT product_id FROM cart WHERE id = ?";
+
+        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> rs.getLong("product_id"), cartId);
+    }
+
     public Long addCartItem(long customerId, long productId) {
         String sql = "INSERT INTO CART(customer_id, product_id) VALUES(?, ?)";
         final KeyHolder keyHolder = new GeneratedKeyHolder();
