@@ -1,5 +1,7 @@
 package shoppingcart.dao;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
@@ -29,9 +31,10 @@ public class ProductDaoTest {
         // given
         String name = "초콜렛";
         int price = 1_000;
+        String imageUrl = "www.test.com";
 
         // when
-        Long productId = productDao.save(new ProductRequestDto(name, price));
+        Long productId = productDao.save(new ProductRequestDto(name, price, imageUrl));
 
         // then
         assertThat(productId).isEqualTo(1L);
@@ -43,10 +46,47 @@ public class ProductDaoTest {
         // given
         String name = "초콜렛";
         int price = 1_000;
-        Long productId = productDao.save(new ProductRequestDto(name, price));
-        ProductResponseDto expectedProductDto = new ProductResponseDto(productId, name, price);
+        String imageUrl = "www.test.com";
+        Long productId = productDao.save(new ProductRequestDto(name, price, imageUrl));
+        ProductResponseDto expectedProductDto = new ProductResponseDto(productId, name, price, imageUrl);
 
-        // when, then
-        assertThat(productDao.findProductById(productId)).usingRecursiveComparison().isEqualTo(expectedProductDto);
+        // when
+        final ProductResponseDto product = productDao.findProductById(productId);
+
+        // then
+        assertThat(product).usingRecursiveComparison().isEqualTo(expectedProductDto);
+    }
+
+    @DisplayName("상품 목록 조회")
+    @Test
+    void getProducts(){
+
+        // given
+        int size = 0;
+
+        // when
+        final List<ProductResponseDto> products = productDao.findProducts();
+
+        // then
+        assertThat(products).size().isEqualTo(size);
+    }
+
+    @DisplayName("싱품 삭제")
+    @Test
+    void deleteProduct(){
+        // given
+        String name = "초콜렛";
+        int price = 1_000;
+        String imageUrl = "www.test.com";
+
+        Long productId = productDao.save(new ProductRequestDto(name, price, imageUrl));
+        int beforeSize = productDao.findProducts().size();
+
+        // when
+        productDao.delete(productId);
+
+        // then
+        int afterSize = productDao.findProducts().size();
+        assertThat(beforeSize-1).isEqualTo(afterSize);
     }
 }

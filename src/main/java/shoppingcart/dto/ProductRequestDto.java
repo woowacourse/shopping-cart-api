@@ -4,10 +4,12 @@ public class ProductRequestDto {
 
     private final String name;
     private final Integer price;
+    private final String imageUrl;
 
-    public ProductRequestDto(String name, int price) {
+    public ProductRequestDto(String name, Integer price, String imageUrl) {
         this.name = name;
         this.price = price;
+        this.imageUrl = imageUrl;
     }
 
     public String getName() {
@@ -18,4 +20,7 @@ public class ProductRequestDto {
         return price;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
 }
