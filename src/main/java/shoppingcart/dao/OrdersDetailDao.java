@@ -18,7 +18,6 @@ import java.util.List;
  *     primary key (id)
  * ) engine=InnoDB default charset=utf8mb4;
  */
-
 @Repository
 public class OrdersDetailDao {
     private final JdbcTemplate jdbcTemplate;
@@ -27,26 +26,42 @@ public class OrdersDetailDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Long addOrdersDetail(long ordersId, long customerId, long productId, int quantity) {
-        String sql = "INSERT INTO orders_detail (orders_id, customer_id, product_id, quantity) VALUES (?, ?, ?, ?)";
+//    public Long addOrdersDetail(long ordersId, long customerId, long productId, int quantity) {
+////        String sql = "INSERT INTO orders_detail (orders_id, customer_id, product_id, quantity) VALUES (?, ?, ?, ?)";
+//        String sql = "INSERT INTO orders_detail (orders_id, product_id, quantity) VALUES (?, ?, ?)";
+//        final KeyHolder keyHolder = new GeneratedKeyHolder();
+//
+//        jdbcTemplate.update(con -> {
+//            PreparedStatement preparedStatement = con.prepareStatement(sql, new String[]{"id"});
+//            preparedStatement.setLong(1, ordersId);
+////            preparedStatement.setLong(2, customerId);
+//            preparedStatement.setLong(2, productId);
+//            preparedStatement.setLong(3, quantity);
+//            return preparedStatement;
+//        }, keyHolder);
+//        return keyHolder.getKey().longValue();
+//    }
+
+    public Long addOrdersDetail(long ordersId, long productId, int quantity) {
+        String sql = "INSERT INTO orders_detail (orders_id, product_id, quantity) VALUES (?, ?, ?)";
         final KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(con -> {
             PreparedStatement preparedStatement = con.prepareStatement(sql, new String[]{"id"});
             preparedStatement.setLong(1, ordersId);
-            preparedStatement.setLong(2, customerId);
-            preparedStatement.setLong(3, productId);
-            preparedStatement.setLong(4, quantity);
+            preparedStatement.setLong(2, productId);
+            preparedStatement.setLong(3, quantity);
             return preparedStatement;
         }, keyHolder);
         return keyHolder.getKey().longValue();
     }
 
     public List<OrdersDetailDto> findOrdersDetailsByOrderId(long orderId) {
-        String sql = "SELECT product_id, quantity FROM orders_detail WHERE order_id = ?";
+        String sql = "SELECT product_id, quantity FROM orders_detail WHERE orders_id = ?";
         return jdbcTemplate.query(sql, (rs, rowNum) -> new OrdersDetailDto(
                 rs.getLong("product_id"),
                 rs.getInt("quantity")
-        ));
+        ), orderId);
     }
+
 }
