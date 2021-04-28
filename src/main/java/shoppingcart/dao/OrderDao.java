@@ -9,41 +9,32 @@ import java.sql.PreparedStatement;
 import java.util.List;
 
 @Repository
-public class CartDao {
+public class OrderDao {
     private final JdbcTemplate jdbcTemplate;
 
-    public CartDao(JdbcTemplate jdbcTemplate) {
+    public OrderDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Long> findProductIdsByCustomerId(long customerId) {
-        String sql = "SELECT product_id FROM cart WHERE customer_id = ?";
-
-        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getLong("product_id"), customerId);
-    }
-
-    public List<Long> findIdsByCustomerId(long customerId) {
-        String sql = "SELECT id FROM cart WHERE customer_id = ?";
-
-        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getLong("id"), customerId);
-    }
-
-    public Long addCartItem(long customerId, long productId) {
-        String sql = "INSERT INTO CART(customer_id, product_id) VALUES(?, ?)";
+    public Long addOrder(long customerId, long productId, int quantity) {
+        String sql = "INSERT INTO orders (customer_id, product_id, quantity) VALUES (?, ?, ?)";
         final KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(con -> {
             PreparedStatement preparedStatement = con.prepareStatement(sql, new String[]{"id"});
             preparedStatement.setLong(1, customerId);
             preparedStatement.setLong(2, productId);
+            preparedStatement.setLong(3, quantity);
             return preparedStatement;
         }, keyHolder);
         return keyHolder.getKey().longValue();
     }
 
-    public void deleteCartItem(long id) {
-        String sql = "DELETE FROM cart WHERE id = ?";
-
-        jdbcTemplate.update(sql, id);
+    public List<OrderDto> findOrdersByCustomerId(long customerId) {
+        String sql = "SELECT product_id, quantity FROM orders WHERE customer_id = ?";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new OrderDto(
+                rs.getLong("product_id"),
+                rs.getInt("quantity")
+        ));
     }
 }
