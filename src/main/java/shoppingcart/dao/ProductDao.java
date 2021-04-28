@@ -61,4 +61,8 @@ public class ProductDao {
         final String query = "DELETE FROM PRODUCT WHERE id = ?";
         jdbcTemplate.update(query, productId);
     }
+
+    public List<ProductResponseDto> findAllByCartIds(List<Long> productIds) {
+        return null;
+    }
 }
