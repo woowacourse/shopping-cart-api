@@ -3,6 +3,7 @@ package shoppingcart.dao;
 import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -40,7 +41,8 @@ public class ProductDao {
         return jdbcTemplate.queryForObject(query,
                 (resultSet, rowNumber) ->
                         new ProductResponseDto(productId,
-                                resultSet.getString("name"), resultSet.getInt("price"), resultSet.getString("image_url")
+                                resultSet.getString("name"), resultSet.getInt("price"),
+                                resultSet.getString("image_url")
                         ), productId
         );
     }
@@ -62,7 +64,7 @@ public class ProductDao {
         jdbcTemplate.update(query, productId);
     }
 
-    public List<ProductResponseDto> findAllByCartIds(List<Long> productIds) {
-        return null;
+    public List<ProductResponseDto> findProductsByIds(List<Long> productIds) {
+        return productIds.stream().map(this::findProductById).collect(Collectors.toList());
     }
 }
