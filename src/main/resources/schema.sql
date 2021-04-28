@@ -1,4 +1,4 @@
-drop table if exists order_detail;
+drop table if exists orders_detail;
 
 drop table if exists orders;
 
