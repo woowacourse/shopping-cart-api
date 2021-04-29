@@ -2,11 +2,13 @@ package shoppingcart.service;
 
 import org.springframework.stereotype.Service;
 import shoppingcart.dao.CartDao;
+import shoppingcart.dao.CustomerDao;
 import shoppingcart.dao.OrderDao;
 import shoppingcart.dao.OrdersDetailDao;
 
 import java.util.ArrayList;
 import java.util.List;
+import shoppingcart.dao.ProductDao;
 
 @Service
 public class ShoppingCartService {

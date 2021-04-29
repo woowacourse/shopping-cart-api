@@ -142,12 +142,16 @@ public class TempShoppingCartService {
     }
 
     // 주문 상세
-    public Void findOrderById(String name) {
+    public Void findOrderById(String name, long orderId) {
         // 유저 가져오기
         // orderRequestDtos - cartId, quantity
         // [customerDao] input: name - output: customerId
 
-        //
+        // orderDetailDao.오더id_가지고있는_orderDetail들_가져오는기능(orderId) => List<OrdersDetailDto>
+        // productDao.
+        // List<orderId> oderIds = orderDao.xx하는method.(customerId)
+
+        // [orderDetailDao] input: List<orderId> - output: List<OrdersDetailDTO(orderDetailId, orderId, productId, quantity)>
         return null;
     }
 }
