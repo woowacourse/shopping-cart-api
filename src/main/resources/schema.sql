@@ -13,7 +13,7 @@ create table customer
     id       bigint       not null auto_increment,
     username varchar(255) not null,
     primary key (id)
-);
+) engine=InnoDB default charset=utf8mb4;
 
 alter table customer
     add unique key (username);
@@ -25,14 +25,14 @@ create table product
     price     integer      not null,
     image_url varchar(255),
     primary key (id)
-);
+) engine=InnoDB default charset=utf8mb4;
 
 create table cart
 (
     id          bigint not null auto_increment,
     customer_id bigint not null,
     product_id  bigint not null
-);
+) engine=InnoDB default charset=utf8mb4;
 
 alter table cart
     add constraint fk_cart_to_customer
@@ -47,7 +47,7 @@ create table orders
     id          bigint not null auto_increment,
     customer_id bigint not null,
     primary key (id)
-);
+) engine=InnoDB default charset=utf8mb4;
 
 alter table orders
     add constraint fk_orders_to_customer
@@ -60,7 +60,7 @@ create table orders_detail
     product_id bigint  not null,
     quantity   integer not null,
     primary key (id)
-);
+) engine=InnoDB default charset=utf8mb4;
 
 alter table orders_detail
     add constraint fk_orders_detail_to_orders
