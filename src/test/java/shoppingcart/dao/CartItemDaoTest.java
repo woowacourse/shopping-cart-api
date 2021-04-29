@@ -18,14 +18,14 @@ import shoppingcart.dto.ProductRequestDto;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 @Sql(scripts = {"classpath:schema.sql", "classpath:data.sql"})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-public class CartDaoTest {
-    private final CartDao cartDao;
+public class CartItemDaoTest {
+    private final CartItemDao cartItemDao;
     private final ProductDao productDao;
     private final JdbcTemplate jdbcTemplate;
 
-    public CartDaoTest(JdbcTemplate jdbcTemplate) {
+    public CartItemDaoTest(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        cartDao = new CartDao(jdbcTemplate);
+        cartItemDao = new CartItemDao(jdbcTemplate);
         productDao = new ProductDao(jdbcTemplate);
     }
 
@@ -34,8 +34,8 @@ public class CartDaoTest {
         productDao.save(new ProductRequestDto("banana", 1_000, "woowa1.com"));
         productDao.save(new ProductRequestDto("apple", 2_000, "woowa2.com"));
 
-        jdbcTemplate.update( "INSERT INTO CART(customer_id, product_id) VALUES(?, ?)", 1L, 1L);
-        jdbcTemplate.update( "INSERT INTO CART(customer_id, product_id) VALUES(?, ?)", 1L, 2L);
+        jdbcTemplate.update( "INSERT INTO cart_item(customer_id, product_id) VALUES(?, ?)", 1L, 1L);
+        jdbcTemplate.update( "INSERT INTO cart_item(customer_id, product_id) VALUES(?, ?)", 1L, 2L);
     }
 
     @DisplayName("카트에 아이템을 담으면, 담긴 카트 아이디를 반환한다. ")
@@ -47,7 +47,7 @@ public class CartDaoTest {
         long productId = 1L;
 
         // when
-        long cartId = cartDao.addCartItem(customerId, productId);
+        long cartId = cartItemDao.addCartItem(customerId, productId);
 
         // then
         assertThat(cartId).isEqualTo(3L);
@@ -61,7 +61,7 @@ public class CartDaoTest {
         long customerId = 1L;
 
         // when
-        final List<Long> productsIds = cartDao.findProductIdsByCustomerId(customerId);
+        final List<Long> productsIds = cartItemDao.findProductIdsByCustomerId(customerId);
 
         // then
         assertThat(productsIds).containsExactly(1L, 2L);
@@ -75,7 +75,7 @@ public class CartDaoTest {
         long customerId = 1L;
 
         // when
-        final List<Long> cartIds = cartDao.findIdsByCustomerId(customerId);
+        final List<Long> cartIds = cartItemDao.findIdsByCustomerId(customerId);
 
         // then
         assertThat(cartIds).containsExactly(1L, 2L);
@@ -89,11 +89,11 @@ public class CartDaoTest {
         long cartId = 1L;
 
         // when
-        cartDao.deleteCartItem(cartId);
+        cartItemDao.deleteCartItem(cartId);
 
         // then
         long customerId = 1L;
-        final List<Long> productIds = cartDao.findProductIdsByCustomerId(customerId);
+        final List<Long> productIds = cartItemDao.findProductIdsByCustomerId(customerId);
         assertThat(productIds).containsExactly(2L);
     }
 }

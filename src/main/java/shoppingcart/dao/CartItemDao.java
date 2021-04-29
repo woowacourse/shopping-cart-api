@@ -9,33 +9,33 @@ import java.sql.PreparedStatement;
 import java.util.List;
 
 @Repository
-public class CartDao {
+public class CartItemDao {
     private final JdbcTemplate jdbcTemplate;
 
-    public CartDao(JdbcTemplate jdbcTemplate) {
+    public CartItemDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
     public List<Long> findProductIdsByCustomerId(long customerId) {
-        String sql = "SELECT product_id FROM cart WHERE customer_id = ?";
+        String sql = "SELECT product_id FROM cart_item WHERE customer_id = ?";
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getLong("product_id"), customerId);
     }
 
     public List<Long> findIdsByCustomerId(long customerId) {
-        String sql = "SELECT id FROM cart WHERE customer_id = ?";
+        String sql = "SELECT id FROM cart_item WHERE customer_id = ?";
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getLong("id"), customerId);
     }
 
     public Long findProductIdById(Long cartId) {
-        String sql = "SELECT product_id FROM cart WHERE id = ?";
+        String sql = "SELECT product_id FROM cart_item WHERE id = ?";
 
         return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> rs.getLong("product_id"), cartId);
     }
 
     public Long addCartItem(long customerId, long productId) {
-        String sql = "INSERT INTO CART(customer_id, product_id) VALUES(?, ?)";
+        String sql = "INSERT INTO cart_item(customer_id, product_id) VALUES(?, ?)";
         final KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(con -> {
@@ -48,7 +48,7 @@ public class CartDao {
     }
 
     public void deleteCartItem(long id) {
-        String sql = "DELETE FROM cart WHERE id = ?";
+        String sql = "DELETE FROM cart_item WHERE id = ?";
 
         jdbcTemplate.update(sql, id);
     }

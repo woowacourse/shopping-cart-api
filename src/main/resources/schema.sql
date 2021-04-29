@@ -2,7 +2,7 @@ drop table if exists orders_detail;
 
 drop table if exists orders;
 
-drop table if exists cart;
+drop table if exists cart_item;
 
 drop table if exists product;
 
@@ -27,19 +27,19 @@ create table product
     primary key (id)
 ) engine=InnoDB default charset=utf8mb4;
 
-create table cart
+create table cart_item
 (
     id          bigint not null auto_increment,
     customer_id bigint not null,
     product_id  bigint not null
 ) engine=InnoDB default charset=utf8mb4;
 
-alter table cart
-    add constraint fk_cart_to_customer
+alter table cart_item
+    add constraint fk_cart_item_to_customer
         foreign key (customer_id) references customer (id);
 
-alter table cart
-    add constraint fk_cart_to_product
+alter table cart_item
+    add constraint fk_cart_item_to_product
         foreign key (product_id) references product (id);
 
 create table orders

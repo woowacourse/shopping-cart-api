@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shoppingcart.dao.CartDao;
+import shoppingcart.dao.CartItemDao;
 import shoppingcart.dao.CustomerDao;
 import shoppingcart.dao.OrderDao;
 import shoppingcart.dao.OrdersDetailDao;
@@ -21,15 +21,15 @@ public class OrderService {
 
     private final OrderDao orderDao;
     private final OrdersDetailDao ordersDetailDao;
-    private final CartDao cartDao;
+    private final CartItemDao cartItemDao;
     private final CustomerDao customerDao;
     private final ProductDao productDao;
 
     public OrderService(OrderDao orderDao, OrdersDetailDao ordersDetailDao,
-            CartDao cartDao, CustomerDao customerDao, ProductDao productDao) {
+                        CartItemDao cartItemDao, CustomerDao customerDao, ProductDao productDao) {
         this.orderDao = orderDao;
         this.ordersDetailDao = ordersDetailDao;
-        this.cartDao = cartDao;
+        this.cartItemDao = cartItemDao;
         this.customerDao = customerDao;
         this.productDao = productDao;
     }
@@ -42,7 +42,7 @@ public class OrderService {
         List<OrdersDetail> ordersDetails = new ArrayList<>();
         for (OrderDetailRequestDto ordersDetail : orderDetailRequests) {
             // todo orderDetail.getCartId() & customerName 검증
-            Long productId = cartDao.findProductIdById(ordersDetail.getCartId());
+            Long productId = cartItemDao.findProductIdById(ordersDetail.getCartId());
             ordersDetails.add(new OrdersDetail(productId, ordersDetail.getQuantity()));
         }
 
@@ -54,7 +54,7 @@ public class OrderService {
 
         // 장바구니 삭제
         for (OrderDetailRequestDto orderDetail : orderDetailRequests) {
-            cartDao.deleteCartItem(orderDetail.getCartId());
+            cartItemDao.deleteCartItem(orderDetail.getCartId());
         }
 
         return orderId;
