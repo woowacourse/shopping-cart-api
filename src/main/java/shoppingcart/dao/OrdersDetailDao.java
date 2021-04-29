@@ -27,22 +27,6 @@ public class OrdersDetailDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-//    public Long addOrdersDetail(long ordersId, long customerId, long productId, int quantity) {
-////        String sql = "INSERT INTO orders_detail (orders_id, customer_id, product_id, quantity) VALUES (?, ?, ?, ?)";
-//        String sql = "INSERT INTO orders_detail (orders_id, product_id, quantity) VALUES (?, ?, ?)";
-//        final KeyHolder keyHolder = new GeneratedKeyHolder();
-//
-//        jdbcTemplate.update(con -> {
-//            PreparedStatement preparedStatement = con.prepareStatement(sql, new String[]{"id"});
-//            preparedStatement.setLong(1, ordersId);
-////            preparedStatement.setLong(2, customerId);
-//            preparedStatement.setLong(2, productId);
-//            preparedStatement.setLong(3, quantity);
-//            return preparedStatement;
-//        }, keyHolder);
-//        return keyHolder.getKey().longValue();
-//    }
-
     public Long addOrdersDetail(long ordersId, OrdersDetail ordersDetail) {
         String sql = "INSERT INTO orders_detail (orders_id, product_id, quantity) VALUES (?, ?, ?)";
         final KeyHolder keyHolder = new GeneratedKeyHolder();
