@@ -1,10 +1,11 @@
-package shoppingcart.dao;
+package shoppingcart.dto;
 
-public class OrdersDetailDto {
+public class OrdersDetail {
+
     private long productId;
     private int quantity;
 
-    public OrdersDetailDto(long productId, int quantity) {
+    public OrdersDetail(long productId, int quantity) {
         this.productId = productId;
         this.quantity = quantity;
     }

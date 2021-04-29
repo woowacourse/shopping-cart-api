@@ -1,21 +1,22 @@
 package shoppingcart.dao;
 
-import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.jdbc.Sql;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
+import shoppingcart.dto.Product;
 import shoppingcart.dto.ProductRequestDto;
-import shoppingcart.dto.ProductResponseDto;
 
 @JdbcTest
-@Sql("classpath:InitCustomerTable.sql")
+@AutoConfigureTestDatabase(replace = Replace.NONE)
+@Sql("classpath:schema.sql")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class ProductDaoTest {
 
@@ -48,10 +49,10 @@ public class ProductDaoTest {
         int price = 1_000;
         String imageUrl = "www.test.com";
         Long productId = productDao.save(new ProductRequestDto(name, price, imageUrl));
-        ProductResponseDto expectedProductDto = new ProductResponseDto(productId, name, price, imageUrl);
+        Product expectedProductDto = new Product(productId, name, price, imageUrl);
 
         // when
-        final ProductResponseDto product = productDao.findProductById(productId);
+        final Product product = productDao.findProductById(productId);
 
         // then
         assertThat(product).usingRecursiveComparison().isEqualTo(expectedProductDto);
@@ -65,7 +66,7 @@ public class ProductDaoTest {
         int size = 0;
 
         // when
-        final List<ProductResponseDto> products = productDao.findProducts();
+        final List<Product> products = productDao.findProducts();
 
         // then
         assertThat(products).size().isEqualTo(size);

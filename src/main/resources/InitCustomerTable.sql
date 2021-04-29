@@ -7,4 +7,4 @@ create table product
     price integer      not null,
     image_url varchar(255),
     primary key (id)
-) engine=InnoDB default charset=utf8mb4;
+);

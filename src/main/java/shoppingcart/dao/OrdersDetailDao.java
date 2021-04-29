@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.util.List;
+import shoppingcart.dto.OrdersDetail;
 
 /**
  * create table orders_detail
@@ -42,23 +43,23 @@ public class OrdersDetailDao {
 //        return keyHolder.getKey().longValue();
 //    }
 
-    public Long addOrdersDetail(long ordersId, long productId, int quantity) {
+    public Long addOrdersDetail(long ordersId, OrdersDetail ordersDetail) {
         String sql = "INSERT INTO orders_detail (orders_id, product_id, quantity) VALUES (?, ?, ?)";
         final KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(con -> {
             PreparedStatement preparedStatement = con.prepareStatement(sql, new String[]{"id"});
             preparedStatement.setLong(1, ordersId);
-            preparedStatement.setLong(2, productId);
-            preparedStatement.setLong(3, quantity);
+            preparedStatement.setLong(2, ordersDetail.getProductId());
+            preparedStatement.setLong(3, ordersDetail.getQuantity());
             return preparedStatement;
         }, keyHolder);
         return keyHolder.getKey().longValue();
     }
 
-    public List<OrdersDetailDto> findOrdersDetailsByOrderId(long orderId) {
+    public List<OrdersDetail> findOrdersDetailsByOrderId(long orderId) {
         String sql = "SELECT product_id, quantity FROM orders_detail WHERE orders_id = ?";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new OrdersDetailDto(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new OrdersDetail(
                 rs.getLong("product_id"),
                 rs.getInt("quantity")
         ), orderId);

@@ -1,3 +1,4 @@
+drop table if exists cart;
 drop table if exists product;
 
 create table product
@@ -7,7 +8,7 @@ create table product
     price integer      not null,
     image_url varchar(255),
     primary key (id)
-) engine=InnoDB default charset=utf8mb4;
+);
 
 drop table if exists cart;
 
