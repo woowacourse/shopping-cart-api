@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class CartItemDao {
@@ -52,7 +51,7 @@ public class CartItemDao {
         final String sql = "DELETE FROM cart_item WHERE id = ?";
 
         int rowCount = jdbcTemplate.update(sql, id);
-        if(rowCount == 0) {
+        if (rowCount == 0) {
             throw new IllegalArgumentException();
         }
     }

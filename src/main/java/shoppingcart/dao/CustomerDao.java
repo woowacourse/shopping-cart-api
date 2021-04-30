@@ -16,7 +16,7 @@ public class CustomerDao {
         try {
             final String query = "SELECT id FROM CUSTOMER WHERE username = ?";
             return jdbcTemplate.queryForObject(query, Long.class, userName);
-         } catch (final Exception e) {
+        } catch (final Exception e) {
             throw new InvalidCustomerNameException("존재하지 않는 유저 이름입니다.");
         }
     }

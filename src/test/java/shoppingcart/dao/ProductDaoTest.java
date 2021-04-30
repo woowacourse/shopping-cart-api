@@ -1,8 +1,5 @@
 package shoppingcart.dao;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -13,6 +10,10 @@ import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.jdbc.Sql;
 import shoppingcart.dto.Product;
 import shoppingcart.dto.ProductDto;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @JdbcTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
@@ -60,7 +61,7 @@ public class ProductDaoTest {
 
     @DisplayName("상품 목록 조회")
     @Test
-    void getProducts(){
+    void getProducts() {
 
         // given
         int size = 0;
@@ -74,7 +75,7 @@ public class ProductDaoTest {
 
     @DisplayName("싱품 삭제")
     @Test
-    void deleteProduct(){
+    void deleteProduct() {
         // given
         String name = "초콜렛";
         int price = 1_000;
@@ -88,6 +89,6 @@ public class ProductDaoTest {
 
         // then
         int afterSize = productDao.findProducts().size();
-        assertThat(beforeSize-1).isEqualTo(afterSize);
+        assertThat(beforeSize - 1).isEqualTo(afterSize);
     }
 }

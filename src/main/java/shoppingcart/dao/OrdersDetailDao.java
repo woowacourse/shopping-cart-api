@@ -4,21 +4,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import shoppingcart.dto.OrderDetailDto;
 
 import java.sql.PreparedStatement;
 import java.util.List;
-import shoppingcart.dto.OrdersDetail;
 
-/**
- * create table orders_detail
- * (
- *     id         bigint  not null auto_increment,
- *     orders_id  bigint  not null,
- *     product_id bigint  not null,
- *     quantity   integer not null,
- *     primary key (id)
- * ) engine=InnoDB default charset=utf8mb4;
- */
 @Repository
 public class OrdersDetailDao {
     private final JdbcTemplate jdbcTemplate;
@@ -27,7 +17,7 @@ public class OrdersDetailDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Long addOrdersDetail(final Long ordersId, final OrdersDetail ordersDetail) {
+    public Long addOrdersDetail(final Long ordersId, final OrderDetailDto ordersDetail) {
         final String sql = "INSERT INTO orders_detail (orders_id, product_id, quantity) VALUES (?, ?, ?)";
         final KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -41,9 +31,9 @@ public class OrdersDetailDao {
         return keyHolder.getKey().longValue();
     }
 
-    public List<OrdersDetail> findOrdersDetailsByOrderId(final Long orderId) {
+    public List<OrderDetailDto> findOrdersDetailsByOrderId(final Long orderId) {
         final String sql = "SELECT product_id, quantity FROM orders_detail WHERE orders_id = ?";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> new OrdersDetail(
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new OrderDetailDto(
                 rs.getLong("product_id"),
                 rs.getInt("quantity")
         ), orderId);

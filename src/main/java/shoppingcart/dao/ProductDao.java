@@ -1,14 +1,14 @@
 package shoppingcart.dao;
 
-import java.sql.PreparedStatement;
-import java.util.List;
-import java.util.Objects;
-
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 import shoppingcart.dto.Product;
 import shoppingcart.dto.ProductDto;
+
+import java.sql.PreparedStatement;
+import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class ProductDao {
@@ -61,10 +61,4 @@ public class ProductDao {
         final String query = "DELETE FROM PRODUCT WHERE id = ?";
         jdbcTemplate.update(query, productId);
     }
-
-//    public List<Product> findProductsByIds(final List<Long> productIds) {
-//        return productIds.stream()
-//                .map(this::findProductById)
-//                .collect(Collectors.toList());
-//    }
 }

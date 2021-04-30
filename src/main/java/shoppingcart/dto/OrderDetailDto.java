@@ -2,33 +2,36 @@ package shoppingcart.dto;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
-public class OrderDetailResponseDto {
+public class OrderDetailDto {
 
-    @NotNull(groups = TestGroup.request.class)
+    @NotNull(groups = Request.allProperties.class)
     private Long productId;
     private Long cartId;
     private int price;
     private String name;
     private String imageUrl;
 
-    @Min(value = 0, groups = TestGroup.request.class)
+    @Min(value = 0, groups = Request.allProperties.class)
     private int quantity;
 
-    public OrderDetailResponseDto(final Long id, final int quantity) {
+    public OrderDetailDto() {
+    }
+
+    public OrderDetailDto(final Long id, final int quantity) {
         this.productId = id;
         this.cartId = id;
         this.quantity = quantity;
     }
 
-    public OrderDetailResponseDto(final Product product, final int quantity) {
+    public OrderDetailDto(final Product product, final int quantity) {
         this(product.getId(), product.getPrice(), product.getName(), product.getImageUrl(), quantity);
     }
 
-    public OrderDetailResponseDto(final Long productId, final int price, final String name,
-                                  final String imageUrl, final int quantity) {
+    public OrderDetailDto(final Long productId, final int price, final String name,
+                          final String imageUrl, final int quantity) {
         this.productId = productId;
+        this.cartId = productId;
         this.price = price;
         this.name = name;
         this.imageUrl = imageUrl;

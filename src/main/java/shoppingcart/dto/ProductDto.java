@@ -5,15 +5,16 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public class ProductDto {
-    private Long id;
+    @NotNull(groups = Request.id.class)
+    private Long productId;
 
-    @NotBlank(groups = TestGroup.request.class)
+    @NotBlank(groups = Request.allProperties.class)
     private String name;
 
-    @Min(value = 0, message = "금액은 음수일 수 없습니다.", groups = TestGroup.request.class)
+    @Min(value = 0, message = "금액은 음수일 수 없습니다.", groups = Request.allProperties.class)
     private Integer price;
 
-    @NotBlank(groups = TestGroup.request.class)
+    @NotBlank(groups = Request.allProperties.class)
     private String imageUrl;
 
     public ProductDto() {
@@ -37,7 +38,7 @@ public class ProductDto {
         return imageUrl;
     }
 
-    public Long getId() {
-        return id;
+    public Long getProductId() {
+        return productId;
     }
 }

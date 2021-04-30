@@ -1,21 +1,15 @@
 package shoppingcart.service;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import shoppingcart.dao.*;
+import shoppingcart.dto.OrderDetailDto;
+import shoppingcart.dto.OrderDto;
+import shoppingcart.dto.Product;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import shoppingcart.dao.CartItemDao;
-import shoppingcart.dao.CustomerDao;
-import shoppingcart.dao.OrderDao;
-import shoppingcart.dao.OrdersDetailDao;
-import shoppingcart.dao.ProductDao;
-import shoppingcart.dto.OrderDetailRequestDto;
-import shoppingcart.dto.OrderDetailResponseDto;
-import shoppingcart.dto.OrderResponseDto;
-import shoppingcart.dto.OrdersDetail;
-import shoppingcart.dto.Product;
 
 @Service
 @Transactional
@@ -36,30 +30,30 @@ public class OrderService {
         this.productDao = productDao;
     }
 
-    public Long addOrder(final List<OrderDetailRequestDto> orderDetailRequests, final String customerName) {
+    public Long addOrder(final List<OrderDetailDto> orderDetailRequests, final String customerName) {
         final Long customerId = customerDao.findIdByUserName(customerName);
         final Long orderId = orderDao.addOrders(customerId);
 
-        for (final OrdersDetail orderDetail : getOrdersDetails(orderDetailRequests)) {
+        for (final OrderDetailDto orderDetail : getOrdersDetails(orderDetailRequests)) {
             ordersDetailDao.addOrdersDetail(orderId, orderDetail);
         }
 
-        for (final OrderDetailRequestDto orderDetail : orderDetailRequests) {
+        for (final OrderDetailDto orderDetail : orderDetailRequests) {
             cartItemDao.deleteCartItem(orderDetail.getCartId());
         }
         return orderId;
     }
 
-    private List<OrdersDetail> getOrdersDetails(final List<OrderDetailRequestDto> orderDetailRequests) {
-        final List<OrdersDetail> ordersDetails = new ArrayList<>();
-        for (final OrderDetailRequestDto ordersDetail : orderDetailRequests) {
+    private List<OrderDetailDto> getOrdersDetails(final List<OrderDetailDto> orderDetailRequests) {
+        final List<OrderDetailDto> ordersDetails = new ArrayList<>();
+        for (final OrderDetailDto ordersDetail : orderDetailRequests) {
             final Long productId = cartItemDao.findProductIdById(ordersDetail.getCartId());
-            ordersDetails.add(new OrdersDetail(productId, ordersDetail.getQuantity()));
+            ordersDetails.add(new OrderDetailDto(productId, ordersDetail.getQuantity()));
         }
         return ordersDetails;
     }
 
-    public OrderResponseDto findOrderById(final String customerName, final Long orderId) {
+    public OrderDto findOrderById(final String customerName, final Long orderId) {
         validateOrderIdByCustomerName(customerName, orderId);
         return findOrderResponseDtoByOrderId(orderId);
     }
@@ -72,7 +66,7 @@ public class OrderService {
         }
     }
 
-    public List<OrderResponseDto> findOrdersByCustomerName(final String customerName) {
+    public List<OrderDto> findOrdersByCustomerName(final String customerName) {
         final Long customerId = customerDao.findIdByUserName(customerName);
         final List<Long> orderIds = orderDao.findOrderIdsByCustomerId(customerId);
 
@@ -81,14 +75,14 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    private OrderResponseDto findOrderResponseDtoByOrderId(final Long orderId) {
-        final List<OrdersDetail> ordersDetails = ordersDetailDao.findOrdersDetailsByOrderId(orderId);
+    private OrderDto findOrderResponseDtoByOrderId(final Long orderId) {
+        final List<OrderDetailDto> ordersDetails = ordersDetailDao.findOrdersDetailsByOrderId(orderId);
 
-        final List<OrderDetailResponseDto> orderDetailResponses = new ArrayList<>();
-        for (final OrdersDetail ordersDetail : ordersDetails) {
+        final List<OrderDetailDto> orderDetailResponses = new ArrayList<>();
+        for (final OrderDetailDto ordersDetail : ordersDetails) {
             final Product product = productDao.findProductById(ordersDetail.getProductId());
-            orderDetailResponses.add(new OrderDetailResponseDto(product, ordersDetail.getQuantity()));
+            orderDetailResponses.add(new OrderDetailDto(product, ordersDetail.getQuantity()));
         }
-        return new OrderResponseDto(orderId, orderDetailResponses);
+        return new OrderDto(orderId, orderDetailResponses);
     }
 }

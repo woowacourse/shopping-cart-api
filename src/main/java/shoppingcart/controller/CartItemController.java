@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import shoppingcart.dto.CartDto;
 import shoppingcart.dto.ProductDto;
-import shoppingcart.dto.TestGroup;
+import shoppingcart.dto.Request;
 import shoppingcart.service.CartService;
 
 import java.net.URI;
@@ -27,9 +27,9 @@ public class CartItemController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> addCartItem(@Validated(TestGroup.response.class) @RequestBody final ProductDto productDto,
+    public ResponseEntity<Void> addCartItem(@Validated(Request.id.class) @RequestBody final ProductDto productDto,
                                             @PathVariable final String customerName) {
-        final Long newId = cartService.addCart(productDto.getId(), customerName);
+        final Long newId = cartService.addCart(productDto.getProductId(), customerName);
         final URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{cartId}")

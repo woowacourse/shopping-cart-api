@@ -1,21 +1,16 @@
 package shoppingcart.controller;
 
-import java.net.URI;
-import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import shoppingcart.dto.Product;
 import shoppingcart.dto.ProductDto;
-import shoppingcart.dto.TestGroup;
+import shoppingcart.dto.Request;
 import shoppingcart.service.ProductService;
+
+import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
@@ -33,7 +28,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> add(@Validated(TestGroup.request.class) @RequestBody final ProductDto productDto) {
+    public ResponseEntity<Void> add(@Validated(Request.allProperties.class) @RequestBody final ProductDto productDto) {
         final Long productId = productService.addProduct(productDto);
         final URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -43,7 +38,7 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<Product> product(@PathVariable final Long productId){
+    public ResponseEntity<Product> product(@PathVariable final Long productId) {
         return ResponseEntity.ok(productService.findProductById(productId));
     }
 
