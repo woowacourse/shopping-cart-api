@@ -41,7 +41,7 @@ public class OrderService {
         // 상품 id, quantity 매칭
         List<OrdersDetail> ordersDetails = new ArrayList<>();
         for (OrderDetailRequestDto ordersDetail : orderDetailRequests) {
-            // todo orderDetail.getCartId() & customerName 검증
+            // cartId 가 없으면 예외 발생
             Long productId = cartItemDao.findProductIdById(ordersDetail.getCartId());
             ordersDetails.add(new OrdersDetail(productId, ordersDetail.getQuantity()));
         }
@@ -67,7 +67,11 @@ public class OrderService {
     }
 
     private void validateOrderIdByCustomerName(String customerName, long orderId) {
+
+        // cusrtomerName이 없을 경우 에외 발생
         Long customerId = customerDao.findIdByUserName(customerName);
+
+        // customerId 와 orderId를 동시에 만족하는 row가 없을 경우 403 발생
         if (!orderDao.isValidOrderId(customerId, orderId)) {
             throw new RuntimeException("유저에게는 해당 order_id가 없습니다.");
         }
@@ -75,6 +79,8 @@ public class OrderService {
 
     // 주문 목록
     public List<OrderResponseDto> findOrdersByCustomerName(String customerName) {
+
+        // cusrtomerName이 없을 경우 에외 발생
         Long customerId = customerDao.findIdByUserName(customerName);
 
         List<Long> orderIds = orderDao.findOrderIdsByCustomerId(customerId);

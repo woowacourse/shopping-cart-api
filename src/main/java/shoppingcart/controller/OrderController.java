@@ -24,7 +24,6 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    // 주문 추가
     @PostMapping
     public ResponseEntity<Void> addOrder(@PathVariable String customerName, @RequestBody
             List<OrderDetailRequestDto> orderDetailRequestDtos) {
@@ -34,13 +33,14 @@ public class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<OrderResponseDto> findOrder(@PathVariable  String customerName, @PathVariable Long orderId) {
+    public ResponseEntity<OrderResponseDto> findOrder(@PathVariable String customerName,
+                                                      @PathVariable Long orderId) {
         final OrderResponseDto orderResponseDto = orderService.findOrderById(customerName, orderId);
         return ResponseEntity.ok(orderResponseDto);
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderResponseDto>> findOrders(@PathVariable  String customerName){
+    public ResponseEntity<List<OrderResponseDto>> findOrders(@PathVariable String customerName) {
         final List<OrderResponseDto> orderResponseDtos =
                 orderService.findOrdersByCustomerName(customerName);
         return ResponseEntity.ok(orderResponseDtos);
