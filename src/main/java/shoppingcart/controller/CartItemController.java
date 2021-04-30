@@ -18,26 +18,26 @@ public class CartItemController {
         this.cartService = cartService;
     }
 
-    @GetMapping("/customers/{customer_name}/carts")
-    public ResponseEntity<List<CartResponseDto>> getCartItems(@PathVariable String customer_name) {
-        return ResponseEntity.ok().body(cartService.findCartsByCustomerName(customer_name));
+    @GetMapping("/customers/{customerName}/carts")
+    public ResponseEntity<List<CartResponseDto>> getCartItems(@PathVariable String customerName) {
+        return ResponseEntity.ok().body(cartService.findCartsByCustomerName(customerName));
     }
 
-    @PostMapping("/customers/{customer_name}/carts")
-    public ResponseEntity<Void> addCartItem(@RequestBody ProductIdRequestDto productIdRequestDto, @PathVariable String customer_name) {
+    @PostMapping("/customers/{customerName}/carts")
+    public ResponseEntity<Void> addCartItem(@RequestBody ProductIdRequestDto productIdRequestDto, @PathVariable String customerName) {
         // productId가 있는지 체크 -> Exception 잡기
-        long newId = cartService.addCart(productIdRequestDto.getProductId(), customer_name);
+        long newId = cartService.addCart(productIdRequestDto.getProductId(), customerName);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/{cart_id}")
+                .path("/{cartId}")
                 .buildAndExpand(newId)
                 .toUri();
         return ResponseEntity.created(uri).build();
     }
 
-    @DeleteMapping("/customers/{customer_name}/carts/{cart_id}")
-    public ResponseEntity<Void> deleteCartItem(@PathVariable String customer_name, @PathVariable long cart_id) {
-        cartService.deleteCart(customer_name, cart_id);
+    @DeleteMapping("/customers/{customerName}/carts/{cartId}")
+    public ResponseEntity<Void> deleteCartItem(@PathVariable String customerName, @PathVariable long cartId) {
+        cartService.deleteCart(customerName, cartId);
         return ResponseEntity.status(204).build();
     }
 }
