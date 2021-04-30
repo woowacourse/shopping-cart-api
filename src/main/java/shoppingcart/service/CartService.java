@@ -47,6 +47,12 @@ public class CartService {
     // 장바구니 단일 삭제
     public void deleteCart(String customerName, long cartId) {
         // todo customer 유효성 검사
+        List<CartResponseDto> cartResponseDtos = findCartsByCustomerName(customerName);
+        cartResponseDtos.stream()
+                .mapToLong(CartResponseDto::getCartId)
+                .filter(cartDtoId -> cartDtoId == cartId)
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("해당 고객의 장바구니 아이템이 아닙니다."));
         cartItemDao.deleteCartItem(cartId);
     }
 }
