@@ -50,6 +50,7 @@ public class CartItemDao {
     public void deleteCartItem(long id) {
         String sql = "DELETE FROM cart_item WHERE id = ?";
 
-        jdbcTemplate.update(sql, id);
+        int rowCount = jdbcTemplate.update(sql, id);
+
     }
 }

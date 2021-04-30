@@ -7,7 +7,7 @@ import shoppingcart.dao.CustomerDao;
 import shoppingcart.dao.ProductDao;
 import shoppingcart.dto.CartResponseDto;
 import shoppingcart.dto.Product;
-import shoppingcart.exception.InvalidAddCartInputException;
+import shoppingcart.exception.InvalidProductException;
 import shoppingcart.exception.NotInCustomerCartItemException;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class CartService {
         try {
             return cartItemDao.addCartItem(customerId, productId);
         } catch (Exception e) {
-            throw new InvalidAddCartInputException("올바르지 않은 사용자 이름이거나 상품 아이디 입니다.");
+            throw new InvalidProductException("올바르지 않은 사용자 이름이거나 상품 아이디 입니다.");
         }
     }
 
@@ -60,6 +60,6 @@ public class CartService {
                 .mapToLong(CartResponseDto::getCartId)
                 .filter(cartDtoId -> cartDtoId == cartId)
                 .findAny()
-                .orElseThrow(() -> new NotInCustomerCartItemException("해당 고객의 장바구니 아이템이 아닙니다."));
+                .orElseThrow(() -> new NotInCustomerCartItemException("올바른 장바구니 아이템이 아닙니다."));
     }
 }

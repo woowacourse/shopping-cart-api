@@ -1,6 +1,9 @@
 package shoppingcart.dto;
 
+import javax.validation.constraints.NotNull;
+
 public class ProductIdRequestDto {
+    @NotNull
     private Long productId;
 
     public ProductIdRequestDto() {

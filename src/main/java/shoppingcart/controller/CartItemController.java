@@ -7,10 +7,12 @@ import shoppingcart.dto.CartResponseDto;
 import shoppingcart.dto.ProductIdRequestDto;
 import shoppingcart.service.CartService;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/customers/{customerName}/carts")
 public class CartItemController {
     private final CartService cartService;
 
@@ -18,14 +20,14 @@ public class CartItemController {
         this.cartService = cartService;
     }
 
-    @GetMapping("/customers/{customerName}/carts")
+    @GetMapping
     public ResponseEntity<List<CartResponseDto>> getCartItems(@PathVariable String customerName) {
         return ResponseEntity.ok().body(cartService.findCartsByCustomerName(customerName));
     }
 
-    @PostMapping("/customers/{customerName}/carts")
-    public ResponseEntity<Void> addCartItem(@RequestBody ProductIdRequestDto productIdRequestDto, @PathVariable String customerName) {
-        // productId가 있는지 체크 -> Exception 잡기
+    @PostMapping
+    public ResponseEntity<Void> addCartItem(@Valid @RequestBody ProductIdRequestDto productIdRequestDto,
+                                            @PathVariable String customerName) {
         long newId = cartService.addCart(productIdRequestDto.getProductId(), customerName);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -35,8 +37,9 @@ public class CartItemController {
         return ResponseEntity.created(uri).build();
     }
 
-    @DeleteMapping("/customers/{customerName}/carts/{cartId}")
-    public ResponseEntity<Void> deleteCartItem(@PathVariable String customerName, @PathVariable long cartId) {
+    @DeleteMapping("/{cartId}")
+    public ResponseEntity<Void> deleteCartItem(@PathVariable String customerName,
+                                               @PathVariable Long cartId) {
         cartService.deleteCart(customerName, cartId);
         return ResponseEntity.status(204).build();
     }

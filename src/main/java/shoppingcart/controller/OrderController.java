@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,10 @@ import shoppingcart.dto.OrderDetailRequestDto;
 import shoppingcart.dto.OrderResponseDto;
 import shoppingcart.service.OrderService;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+
+@Validated
 @RestController
 @RequestMapping("/api/customers/{customerName}/orders")
 public class OrderController {
@@ -25,8 +30,10 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> addOrder(@PathVariable String customerName, @RequestBody
-            List<OrderDetailRequestDto> orderDetailRequestDtos) {
+    public ResponseEntity<Void> addOrder(
+            @PathVariable String customerName,
+            @RequestBody @Valid List<OrderDetailRequestDto> orderDetailRequestDtos
+    ) {
         long orderId = orderService.addOrder(orderDetailRequestDtos, customerName);
         return ResponseEntity.created(
                 URI.create("/api/" + customerName + "/orders/" + orderId)).build();
@@ -44,5 +51,34 @@ public class OrderController {
         final List<OrderResponseDto> orderResponseDtos =
                 orderService.findOrdersByCustomerName(customerName);
         return ResponseEntity.ok(orderResponseDtos);
+    }
+}
+
+class TestDtos {
+    @Valid
+    private List<TestDto> dtos;
+
+    public List<TestDto> getDtos() {
+        return dtos;
+    }
+
+    public void setDtos(List<TestDto> dtos) {
+        this.dtos = dtos;
+    }
+}
+
+class TestDto {
+    @NotBlank
+    private String a;
+
+    public TestDto() {
+    }
+
+    public String getA() {
+        return a;
+    }
+
+    public void setA(String a) {
+        this.a = a;
     }
 }
