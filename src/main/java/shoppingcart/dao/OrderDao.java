@@ -11,14 +11,14 @@ import java.util.List;
 @Repository
 public class OrderDao {
 
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
-    public OrderDao(JdbcTemplate jdbcTemplate) {
+    public OrderDao(final JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Long addOrders(long customerId) {
-        String sql = "INSERT INTO orders (customer_id) VALUES (?)";
+    public Long addOrders(final Long customerId) {
+        final String sql = "INSERT INTO orders (customer_id) VALUES (?)";
         final KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(con -> {
@@ -29,13 +29,13 @@ public class OrderDao {
         return keyHolder.getKey().longValue();
     }
 
-    public List<Long> findOrderIdsByCustomerId(long customerId) {
-        String sql = "SELECT id FROM orders WHERE customer_id = ? ";
+    public List<Long> findOrderIdsByCustomerId(final Long customerId) {
+        final String sql = "SELECT id FROM orders WHERE customer_id = ? ";
         return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getLong("id"), customerId);
     }
 
-    public boolean isValidOrderId(long customerId, long orderId) {
-        String query = "SELECT EXISTS(SELECT * FROM orders WHERE customer_id = ? AND id = ?)";
+    public boolean isValidOrderId(final Long customerId, final Long orderId) {
+        final String query = "SELECT EXISTS(SELECT * FROM orders WHERE customer_id = ? AND id = ?)";
         return jdbcTemplate.queryForObject(query, Boolean.class, customerId, orderId);
     }
 }

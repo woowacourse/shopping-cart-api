@@ -19,16 +19,15 @@ public class ControllerAdvice {
 
     // 잘못된 타입 준 경우
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<String> handle(HttpMessageNotReadableException e) {
+    public ResponseEntity<String> handle(final HttpMessageNotReadableException e) {
         return new ResponseEntity<>(
                 e.getMessage(),
-                HttpStatus.BAD_REQUEST
-        );
+                HttpStatus.BAD_REQUEST);
     }
 
     // DTO 필드 하나만 빠져도
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handle(MethodArgumentNotValidException e){
+    public ResponseEntity<String> handle(final MethodArgumentNotValidException e){
         return new ResponseEntity<>(
                 e.getMessage(),
                 HttpStatus.BAD_REQUEST
@@ -37,7 +36,7 @@ public class ControllerAdvice {
 
     // customerName이 잘못들어온 경우 (공통)
     @ExceptionHandler(InvalidCustomerNameException.class)
-    public ResponseEntity<String> handle(InvalidCustomerNameException e) {
+    public ResponseEntity<String> handle(final InvalidCustomerNameException e) {
         return new ResponseEntity<>(
                 e.getMessage(),
                 HttpStatus.BAD_REQUEST
@@ -46,7 +45,7 @@ public class ControllerAdvice {
 
     // 없는 productId가 들어온 경우
     @ExceptionHandler(InvalidProductException.class)
-    public ResponseEntity<String> handle(InvalidProductException e) {
+    public ResponseEntity<String> handle(final InvalidProductException e) {
         return new ResponseEntity<>(
                 e.getMessage(),
                 HttpStatus.BAD_REQUEST
@@ -55,7 +54,7 @@ public class ControllerAdvice {
 
     // 유저의 카트아이디가 아닌경우, 존재하지 않는 카트 아이디인 경우
     @ExceptionHandler(NotInCustomerCartItemException.class)
-    public ResponseEntity<String> handle(NotInCustomerCartItemException e) {
+    public ResponseEntity<String> handle(final NotInCustomerCartItemException e) {
         return new ResponseEntity<>(
                 e.getMessage(),
                 HttpStatus.BAD_REQUEST
@@ -64,13 +63,10 @@ public class ControllerAdvice {
 
     // list에서 quantity가 0 이상인 경우
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<String> handle(ConstraintViolationException e) {
+    public ResponseEntity<String> handle(final ConstraintViolationException e) {
         return new ResponseEntity<>(
                 e.getMessage(),
                 HttpStatus.BAD_REQUEST
         );
     }
-
-
-
 }

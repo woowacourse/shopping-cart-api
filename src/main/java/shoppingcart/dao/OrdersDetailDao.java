@@ -23,12 +23,12 @@ import shoppingcart.dto.OrdersDetail;
 public class OrdersDetailDao {
     private final JdbcTemplate jdbcTemplate;
 
-    public OrdersDetailDao(JdbcTemplate jdbcTemplate) {
+    public OrdersDetailDao(final JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Long addOrdersDetail(long ordersId, OrdersDetail ordersDetail) {
-        String sql = "INSERT INTO orders_detail (orders_id, product_id, quantity) VALUES (?, ?, ?)";
+    public Long addOrdersDetail(final Long ordersId, final OrdersDetail ordersDetail) {
+        final String sql = "INSERT INTO orders_detail (orders_id, product_id, quantity) VALUES (?, ?, ?)";
         final KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(con -> {
@@ -41,12 +41,11 @@ public class OrdersDetailDao {
         return keyHolder.getKey().longValue();
     }
 
-    public List<OrdersDetail> findOrdersDetailsByOrderId(long orderId) {
-        String sql = "SELECT product_id, quantity FROM orders_detail WHERE orders_id = ?";
+    public List<OrdersDetail> findOrdersDetailsByOrderId(final Long orderId) {
+        final String sql = "SELECT product_id, quantity FROM orders_detail WHERE orders_id = ?";
         return jdbcTemplate.query(sql, (rs, rowNum) -> new OrdersDetail(
                 rs.getLong("product_id"),
                 rs.getInt("quantity")
         ), orderId);
     }
-
 }

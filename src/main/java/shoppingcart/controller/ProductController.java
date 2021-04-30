@@ -3,7 +3,7 @@ package shoppingcart.controller;
 import java.net.URI;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,12 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponentsBuilder;
 import shoppingcart.dto.Product;
-import shoppingcart.dto.ProductRequestDto;
+import shoppingcart.dto.ProductDto;
+import shoppingcart.dto.TestGroup;
 import shoppingcart.service.ProductService;
-
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/products")
@@ -25,7 +23,7 @@ public class ProductController {
 
     private final ProductService productService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(final ProductService productService) {
         this.productService = productService;
     }
 
@@ -35,9 +33,9 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> add(@Valid @RequestBody ProductRequestDto productRequestDto) {
-        Long productId = productService.addProduct(productRequestDto);
-        URI uri = ServletUriComponentsBuilder
+    public ResponseEntity<Void> add(@Validated(TestGroup.request.class) @RequestBody final ProductDto productDto) {
+        final Long productId = productService.addProduct(productDto);
+        final URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/" + productId)
                 .build().toUri();
@@ -45,12 +43,12 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<Product> product(@PathVariable Long productId){
+    public ResponseEntity<Product> product(@PathVariable final Long productId){
         return ResponseEntity.ok(productService.findProductById(productId));
     }
 
     @DeleteMapping("/{productId}")
-    public ResponseEntity<Void> delete(@PathVariable Long productId) {
+    public ResponseEntity<Void> delete(@PathVariable final Long productId) {
         productService.deleteProductById(productId);
         return ResponseEntity.noContent().build();
     }

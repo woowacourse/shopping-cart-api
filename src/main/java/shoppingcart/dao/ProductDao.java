@@ -3,38 +3,38 @@ package shoppingcart.dao;
 import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 import shoppingcart.dto.Product;
-import shoppingcart.dto.ProductRequestDto;
+import shoppingcart.dto.ProductDto;
 
 @Repository
 public class ProductDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public ProductDao(JdbcTemplate jdbcTemplate) {
+    public ProductDao(final JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Long save(ProductRequestDto productRequestDto) {
+    public Long save(final ProductDto productDto) {
         final String query = "INSERT INTO product (name, price, image_url) VALUES (?, ?, ?)";
         final GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             final PreparedStatement preparedStatement =
                     connection.prepareStatement(query, new String[]{"id"});
-            preparedStatement.setString(1, productRequestDto.getName());
-            preparedStatement.setInt(2, productRequestDto.getPrice());
-            preparedStatement.setString(3, productRequestDto.getImageUrl());
+            preparedStatement.setString(1, productDto.getName());
+            preparedStatement.setInt(2, productDto.getPrice());
+            preparedStatement.setString(3, productDto.getImageUrl());
             return preparedStatement;
         }, keyHolder);
 
         return Objects.requireNonNull(keyHolder.getKey()).longValue();
     }
 
-    public Product findProductById(Long productId) {
+    public Product findProductById(final Long productId) {
         final String query = "SELECT name, price, image_url FROM product WHERE id = ?";
         return jdbcTemplate.queryForObject(query, (resultSet, rowNumber) ->
                 new Product(
@@ -62,7 +62,9 @@ public class ProductDao {
         jdbcTemplate.update(query, productId);
     }
 
-    public List<Product> findProductsByIds(List<Long> productIds) {
-        return productIds.stream().map(this::findProductById).collect(Collectors.toList());
-    }
+//    public List<Product> findProductsByIds(final List<Long> productIds) {
+//        return productIds.stream()
+//                .map(this::findProductById)
+//                .collect(Collectors.toList());
+//    }
 }

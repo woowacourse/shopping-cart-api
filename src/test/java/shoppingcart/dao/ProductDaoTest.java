@@ -12,7 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.jdbc.Sql;
 import shoppingcart.dto.Product;
-import shoppingcart.dto.ProductRequestDto;
+import shoppingcart.dto.ProductDto;
 
 @JdbcTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
@@ -35,7 +35,7 @@ public class ProductDaoTest {
         String imageUrl = "www.test.com";
 
         // when
-        Long productId = productDao.save(new ProductRequestDto(name, price, imageUrl));
+        Long productId = productDao.save(new ProductDto(name, price, imageUrl));
 
         // then
         assertThat(productId).isEqualTo(1L);
@@ -48,7 +48,7 @@ public class ProductDaoTest {
         String name = "초콜렛";
         int price = 1_000;
         String imageUrl = "www.test.com";
-        Long productId = productDao.save(new ProductRequestDto(name, price, imageUrl));
+        Long productId = productDao.save(new ProductDto(name, price, imageUrl));
         Product expectedProductDto = new Product(productId, name, price, imageUrl);
 
         // when
@@ -80,7 +80,7 @@ public class ProductDaoTest {
         int price = 1_000;
         String imageUrl = "www.test.com";
 
-        Long productId = productDao.save(new ProductRequestDto(name, price, imageUrl));
+        Long productId = productDao.save(new ProductDto(name, price, imageUrl));
         int beforeSize = productDao.findProducts().size();
 
         // when

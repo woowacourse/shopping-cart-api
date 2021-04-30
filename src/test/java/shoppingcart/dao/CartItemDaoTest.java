@@ -12,7 +12,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.jdbc.Sql;
-import shoppingcart.dto.ProductRequestDto;
+import shoppingcart.dto.ProductDto;
 
 @JdbcTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
@@ -31,8 +31,8 @@ public class CartItemDaoTest {
 
     @BeforeEach
     void setUp() {
-        productDao.save(new ProductRequestDto("banana", 1_000, "woowa1.com"));
-        productDao.save(new ProductRequestDto("apple", 2_000, "woowa2.com"));
+        productDao.save(new ProductDto("banana", 1_000, "woowa1.com"));
+        productDao.save(new ProductDto("apple", 2_000, "woowa2.com"));
 
         jdbcTemplate.update( "INSERT INTO cart_item(customer_id, product_id) VALUES(?, ?)", 1L, 1L);
         jdbcTemplate.update( "INSERT INTO cart_item(customer_id, product_id) VALUES(?, ?)", 1L, 2L);

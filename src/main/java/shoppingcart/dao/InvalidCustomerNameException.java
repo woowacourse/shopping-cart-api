@@ -1,7 +1,7 @@
 package shoppingcart.dao;
 
 public class InvalidCustomerNameException extends RuntimeException {
-    public InvalidCustomerNameException(String message) {
+    public InvalidCustomerNameException(final String message) {
         super(message);
     }
 }

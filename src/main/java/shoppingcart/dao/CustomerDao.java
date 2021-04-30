@@ -8,15 +8,15 @@ public class CustomerDao {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public CustomerDao(JdbcTemplate jdbcTemplate) {
+    public CustomerDao(final JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Long findIdByUserName(String userName) {
+    public Long findIdByUserName(final String userName) {
         try {
             final String query = "SELECT id FROM CUSTOMER WHERE username = ?";
             return jdbcTemplate.queryForObject(query, Long.class, userName);
-         } catch (Exception e) {
+         } catch (final Exception e) {
             throw new InvalidCustomerNameException("존재하지 않는 유저 이름입니다.");
         }
     }
