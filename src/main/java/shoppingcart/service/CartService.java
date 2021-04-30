@@ -1,7 +1,5 @@
 package shoppingcart.service;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingcart.dao.CartItemDao;
@@ -9,6 +7,11 @@ import shoppingcart.dao.CustomerDao;
 import shoppingcart.dao.ProductDao;
 import shoppingcart.dto.CartResponseDto;
 import shoppingcart.dto.Product;
+import shoppingcart.exception.InvalidAddCartInputException;
+import shoppingcart.exception.NotInCustomerCartItemException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -24,7 +27,6 @@ public class CartService {
         this.productDao = productDao;
     }
 
-    // 장바구니 목록 조회
     public List<CartResponseDto> findCartsByCustomerName(final String customerName) {
         final Long customerId = customerDao.findIdByUserName(customerName);
         final List<Long> cartIds = cartItemDao.findIdsByCustomerId(customerId);
@@ -38,15 +40,26 @@ public class CartService {
         return cartResponseDtos;
     }
 
-    // 장바구니 상품 추가
     public long addCart(long productId, String customerName) {
         Long customerId = customerDao.findIdByUserName(customerName);
-        return cartItemDao.addCartItem(customerId, productId);
+        try {
+            return cartItemDao.addCartItem(customerId, productId);
+        } catch (Exception e) {
+            throw new InvalidAddCartInputException("올바르지 않은 사용자 이름이거나 상품 아이디 입니다.");
+        }
     }
 
-    // 장바구니 단일 삭제
     public void deleteCart(String customerName, long cartId) {
-        // todo customer 유효성 검사
+        List<CartResponseDto> cartResponseDtos = findCartsByCustomerName(customerName);
+        validateCustomerCart(cartId, cartResponseDtos);
         cartItemDao.deleteCartItem(cartId);
+    }
+
+    private void validateCustomerCart(long cartId, List<CartResponseDto> cartResponseDtos) {
+        cartResponseDtos.stream()
+                .mapToLong(CartResponseDto::getCartId)
+                .filter(cartDtoId -> cartDtoId == cartId)
+                .findAny()
+                .orElseThrow(() -> new NotInCustomerCartItemException("해당 고객의 장바구니 아이템이 아닙니다."));
     }
 }
