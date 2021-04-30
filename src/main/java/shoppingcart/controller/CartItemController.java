@@ -28,8 +28,8 @@ public class CartItemController {
     @PostMapping
     public ResponseEntity<Void> addCartItem(@Valid @RequestBody ProductIdRequestDto productIdRequestDto,
                                             @PathVariable String customerName) {
-        long newId = cartService.addCart(productIdRequestDto.getProductId(), customerName);
-        URI uri = ServletUriComponentsBuilder
+        final Long newId = cartService.addCart(productIdRequestDto.getProductId(), customerName);
+        final URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{cartId}")
                 .buildAndExpand(newId)

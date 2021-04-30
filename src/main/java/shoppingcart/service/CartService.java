@@ -60,6 +60,6 @@ public class CartService {
                 .mapToLong(CartResponseDto::getCartId)
                 .filter(cartDtoId -> cartDtoId == cartId)
                 .findAny()
-                .orElseThrow(() -> new NotInCustomerCartItemException("올바른 장바구니 아이템이 아닙니다."));
+                .orElseThrow(() -> new NotInCustomerCartItemException("장바구니 아이템이 없습니다."));
     }
 }

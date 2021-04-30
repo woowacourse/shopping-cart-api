@@ -53,32 +53,3 @@ public class OrderController {
         return ResponseEntity.ok(orderResponseDtos);
     }
 }
-
-class TestDtos {
-    @Valid
-    private List<TestDto> dtos;
-
-    public List<TestDto> getDtos() {
-        return dtos;
-    }
-
-    public void setDtos(List<TestDto> dtos) {
-        this.dtos = dtos;
-    }
-}
-
-class TestDto {
-    @NotBlank
-    private String a;
-
-    public TestDto() {
-    }
-
-    public String getA() {
-        return a;
-    }
-
-    public void setA(String a) {
-        this.a = a;
-    }
-}

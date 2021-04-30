@@ -1,10 +1,5 @@
 package shoppingcart.controller;
 
-import static shoppingcart.controller.Constants.HOST;
-import static shoppingcart.controller.Constants.PORT;
-import static shoppingcart.controller.Constants.PRODUCTS_PATH;
-import static shoppingcart.controller.Constants.SCHEME;
-
 import java.net.URI;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 import shoppingcart.dto.Product;
 import shoppingcart.dto.ProductRequestDto;
@@ -41,8 +37,9 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<Void> add(@Valid @RequestBody ProductRequestDto productRequestDto) {
         Long productId = productService.addProduct(productRequestDto);
-        URI uri = UriComponentsBuilder.newInstance()
-                .scheme(SCHEME).host(HOST).port(PORT).path(PRODUCTS_PATH).path("/" + productId)
+        URI uri = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/" + productId)
                 .build().toUri();
         return ResponseEntity.created(uri).build();
     }
