@@ -1,9 +1,18 @@
 package shoppingcart.dto;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class OrderDetailRequestDto {
 
     private long cartId;
     private int quantity;
+
+    public OrderDetailRequestDto(long cartId, int quantity) {
+        this.cartId = cartId;
+        this.quantity = quantity;
+    }
 
     public long getCartId() {
         return cartId;
