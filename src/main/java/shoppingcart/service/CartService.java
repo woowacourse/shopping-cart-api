@@ -6,7 +6,7 @@ import shoppingcart.dao.CartItemDao;
 import shoppingcart.dao.CustomerDao;
 import shoppingcart.dao.ProductDao;
 import shoppingcart.dto.CartDto;
-import shoppingcart.dto.Product;
+import shoppingcart.dto.ProductDto;
 import shoppingcart.exception.InvalidProductException;
 import shoppingcart.exception.NotInCustomerCartItemException;
 
@@ -33,7 +33,7 @@ public class CartService {
         final List<CartDto> cartDtos = new ArrayList<>();
         for (final Long cartId : cartIds) {
             final Long productId = cartItemDao.findProductIdById(cartId);
-            final Product product = productDao.findProductById(productId);
+            final ProductDto product = productDao.findProductById(productId);
             cartDtos.add(new CartDto(cartId, product));
         }
         return cartDtos;

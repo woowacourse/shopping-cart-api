@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import shoppingcart.dao.*;
 import shoppingcart.dto.OrderDetailDto;
 import shoppingcart.dto.OrderDto;
-import shoppingcart.dto.Product;
+import shoppingcart.dto.ProductDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +80,7 @@ public class OrderService {
 
         final List<OrderDetailDto> orderDetailResponses = new ArrayList<>();
         for (final OrderDetailDto ordersDetail : ordersDetails) {
-            final Product product = productDao.findProductById(ordersDetail.getProductId());
+            final ProductDto product = productDao.findProductById(ordersDetail.getProductId());
             orderDetailResponses.add(new OrderDetailDto(product, ordersDetail.getQuantity()));
         }
         return new OrderDto(orderId, orderDetailResponses);

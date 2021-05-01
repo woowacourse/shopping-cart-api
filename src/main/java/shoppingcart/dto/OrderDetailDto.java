@@ -24,8 +24,8 @@ public class OrderDetailDto {
         this.quantity = quantity;
     }
 
-    public OrderDetailDto(final Product product, final int quantity) {
-        this(product.getId(), product.getPrice(), product.getName(), product.getImageUrl(), quantity);
+    public OrderDetailDto(final ProductDto product, final int quantity) {
+        this(product.getProductId(), product.getPrice(), product.getName(), product.getImageUrl(), quantity);
     }
 
     public OrderDetailDto(final Long productId, final int price, final String name,

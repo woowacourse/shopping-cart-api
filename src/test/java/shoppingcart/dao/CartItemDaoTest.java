@@ -44,11 +44,11 @@ public class CartItemDaoTest {
     void addCartItem() {
 
         // given
-        long customerId = 1L;
-        long productId = 1L;
+        final Long customerId = 1L;
+        final Long productId = 1L;
 
         // when
-        long cartId = cartItemDao.addCartItem(customerId, productId);
+        final Long cartId = cartItemDao.addCartItem(customerId, productId);
 
         // then
         assertThat(cartId).isEqualTo(3L);
@@ -59,7 +59,7 @@ public class CartItemDaoTest {
     void findProductIdsByCustomerId() {
 
         // given
-        long customerId = 1L;
+        final Long customerId = 1L;
 
         // when
         final List<Long> productsIds = cartItemDao.findProductIdsByCustomerId(customerId);
@@ -73,7 +73,7 @@ public class CartItemDaoTest {
     void findIdsByCustomerId() {
 
         // given
-        long customerId = 1L;
+        final Long customerId = 1L;
 
         // when
         final List<Long> cartIds = cartItemDao.findIdsByCustomerId(customerId);
@@ -87,14 +87,15 @@ public class CartItemDaoTest {
     void deleteCartItem() {
 
         // given
-        long cartId = 1L;
+        final Long cartId = 1L;
 
         // when
         cartItemDao.deleteCartItem(cartId);
 
         // then
-        long customerId = 1L;
+        final Long customerId = 1L;
         final List<Long> productIds = cartItemDao.findProductIdsByCustomerId(customerId);
+
         assertThat(productIds).containsExactly(2L);
     }
 }

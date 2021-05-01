@@ -20,10 +20,16 @@ public class ProductDto {
     public ProductDto() {
     }
 
-    public ProductDto(final String name, final int price, final String imageUrl) {
+
+    public ProductDto(final Long productId, final String name, final int price, final String imageUrl) {
+        this.productId = productId;
         this.name = name;
         this.price = price;
         this.imageUrl = imageUrl;
+    }
+
+    public ProductDto(final String name, final int price, final String imageUrl) {
+        this(null, name, price, imageUrl);
     }
 
     public String getName() {

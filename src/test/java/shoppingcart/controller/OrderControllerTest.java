@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,7 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest
+@SpringBootTest
 @AutoConfigureMockMvc
 public class OrderControllerTest {
 
@@ -41,16 +42,15 @@ public class OrderControllerTest {
     @Test
     void addOrder() throws Exception {
         // given
-        Long cartId = 1L;
-        int quantity = 5;
-        Long cartId2 = 1L;
-        int quantity2 = 5;
+        final Long cartId = 1L;
+        final int quantity = 5;
+        final Long cartId2 = 1L;
+        final int quantity2 = 5;
         final String customerName = "pobi";
         final List<OrderDetailDto> requestDtos =
-                Arrays.asList(new OrderDetailDto(cartId, quantity),
-                        new OrderDetailDto(cartId2, quantity2));
+                Arrays.asList(new OrderDetailDto(cartId, quantity), new OrderDetailDto(cartId2, quantity2));
 
-        final long expectedOrderId = 1L;
+        final Long expectedOrderId = 1L;
         when(orderService.addOrder(any(), eq(customerName)))
                 .thenReturn(expectedOrderId);
 
@@ -75,6 +75,7 @@ public class OrderControllerTest {
         final Long orderId = 1L;
         final OrderDto expected = new OrderDto(orderId,
                 Arrays.asList(new OrderDetailDto(2L, 1_000, "banana", "imageUrl", 2)));
+
         when(orderService.findOrderById(customerName, orderId))
                 .thenReturn(expected);
 

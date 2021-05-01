@@ -4,7 +4,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import shoppingcart.dto.Product;
 import shoppingcart.dto.ProductDto;
 import shoppingcart.dto.Request;
 import shoppingcart.service.ProductService;
@@ -23,7 +22,7 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> products() {
+    public ResponseEntity<List<ProductDto>> products() {
         return ResponseEntity.ok(productService.findProducts());
     }
 
@@ -38,7 +37,7 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<Product> product(@PathVariable final Long productId) {
+    public ResponseEntity<ProductDto> product(@PathVariable final Long productId) {
         return ResponseEntity.ok(productService.findProductById(productId));
     }
 

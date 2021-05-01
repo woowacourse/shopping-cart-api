@@ -3,7 +3,6 @@ package shoppingcart.dao;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
-import shoppingcart.dto.Product;
 import shoppingcart.dto.ProductDto;
 
 import java.sql.PreparedStatement;
@@ -34,10 +33,10 @@ public class ProductDao {
         return Objects.requireNonNull(keyHolder.getKey()).longValue();
     }
 
-    public Product findProductById(final Long productId) {
+    public ProductDto findProductById(final Long productId) {
         final String query = "SELECT name, price, image_url FROM product WHERE id = ?";
         return jdbcTemplate.queryForObject(query, (resultSet, rowNumber) ->
-                new Product(
+                new ProductDto(
                         productId,
                         resultSet.getString("name"), resultSet.getInt("price"),
                         resultSet.getString("image_url")
@@ -45,11 +44,11 @@ public class ProductDao {
         );
     }
 
-    public List<Product> findProducts() {
+    public List<ProductDto> findProducts() {
         final String query = "SELECT id, name, price, image_url FROM product";
         return jdbcTemplate.query(query,
                 (resultSet, rowNumber) ->
-                        new Product(
+                        new ProductDto(
                                 resultSet.getLong("id"),
                                 resultSet.getString("name"),
                                 resultSet.getInt("price"),

@@ -3,7 +3,6 @@ package shoppingcart.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingcart.dao.ProductDao;
-import shoppingcart.dto.Product;
 import shoppingcart.dto.ProductDto;
 
 import java.util.List;
@@ -17,7 +16,7 @@ public class ProductService {
         this.productDao = productDao;
     }
 
-    public List<Product> findProducts() {
+    public List<ProductDto> findProducts() {
         return productDao.findProducts();
     }
 
@@ -25,7 +24,7 @@ public class ProductService {
         return productDao.save(productDto);
     }
 
-    public Product findProductById(final Long productId) {
+    public ProductDto findProductById(final Long productId) {
         return productDao.findProductById(productId);
     }
 

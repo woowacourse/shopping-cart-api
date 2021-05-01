@@ -28,10 +28,10 @@ public class CustomerDaoTest {
     void findIdByUserNameTest() {
 
         // given
-        String userName = "puterism";
+        final String userName = "puterism";
 
         // when
-        long customerId = customerDao.findIdByUserName(userName);
+        final Long customerId = customerDao.findIdByUserName(userName);
 
         // then
         assertThat(customerId).isEqualTo(1L);
