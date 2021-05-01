@@ -27,21 +27,21 @@ public class CartItemController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> addCartItem(@Validated(Request.id.class) @RequestBody final ProductDto productDto,
-                                            @PathVariable final String customerName) {
-        final Long newId = cartService.addCart(productDto.getProductId(), customerName);
-        final URI uri = ServletUriComponentsBuilder
+    public ResponseEntity addCartItem(@Validated(Request.id.class) @RequestBody final ProductDto product,
+                                      @PathVariable final String customerName) {
+        final Long cartId = cartService.addCart(product.getProductId(), customerName);
+        final URI responseLocation = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{cartId}")
-                .buildAndExpand(newId)
+                .buildAndExpand(cartId)
                 .toUri();
-        return ResponseEntity.created(uri).build();
+        return ResponseEntity.created(responseLocation).build();
     }
 
     @DeleteMapping("/{cartId}")
-    public ResponseEntity<Void> deleteCartItem(@PathVariable final String customerName,
-                                               @PathVariable final Long cartId) {
+    public ResponseEntity deleteCartItem(@PathVariable final String customerName,
+                                         @PathVariable final Long cartId) {
         cartService.deleteCart(customerName, cartId);
-        return ResponseEntity.status(204).build();
+        return ResponseEntity.noContent().build();
     }
 }

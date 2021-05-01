@@ -22,9 +22,9 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> addOrder(@PathVariable final String customerName,
-                                         @RequestBody @Valid final List<OrderDetailDto> orderDetailRequestDtos) {
-        long orderId = orderService.addOrder(orderDetailRequestDtos, customerName);
+    public ResponseEntity addOrder(@PathVariable final String customerName,
+                                   @RequestBody @Valid final List<OrderDetailDto> orderDetails) {
+        final Long orderId = orderService.addOrder(orderDetails, customerName);
         return ResponseEntity.created(
                 URI.create("/api/" + customerName + "/orders/" + orderId)).build();
     }
@@ -32,14 +32,13 @@ public class OrderController {
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDto> findOrder(@PathVariable final String customerName,
                                               @PathVariable final Long orderId) {
-        final OrderDto orderDto = orderService.findOrderById(customerName, orderId);
-        return ResponseEntity.ok(orderDto);
+        final OrderDto order = orderService.findOrderById(customerName, orderId);
+        return ResponseEntity.ok(order);
     }
 
     @GetMapping
     public ResponseEntity<List<OrderDto>> findOrders(@PathVariable final String customerName) {
-        final List<OrderDto> orderDtos =
-                orderService.findOrdersByCustomerName(customerName);
-        return ResponseEntity.ok(orderDtos);
+        final List<OrderDto> orders = orderService.findOrdersByCustomerName(customerName);
+        return ResponseEntity.ok(orders);
     }
 }
