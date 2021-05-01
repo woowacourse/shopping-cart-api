@@ -10,6 +10,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import shoppingcart.dto.OrderDetailDto;
+import shoppingcart.dto.OrderRequestDto;
 import shoppingcart.dto.OrdersDto;
 import shoppingcart.service.OrderService;
 
@@ -46,8 +47,8 @@ public class OrderControllerTest {
         final Long cartId2 = 1L;
         final int quantity2 = 5;
         final String customerName = "pobi";
-        final List<OrderDetailDto> requestDtos =
-                Arrays.asList(new OrderDetailDto(cartId, quantity), new OrderDetailDto(cartId2, quantity2));
+        final List<OrderRequestDto> requestDtos =
+                Arrays.asList(new OrderRequestDto(cartId, quantity), new OrderRequestDto(cartId2, quantity2));
 
         final Long expectedOrderId = 1L;
         when(orderService.addOrder(any(), eq(customerName)))

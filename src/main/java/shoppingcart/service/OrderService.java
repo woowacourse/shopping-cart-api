@@ -4,8 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingcart.dao.*;
 import shoppingcart.dto.OrderDetailDto;
-import shoppingcart.dto.OrdersDto;
 import shoppingcart.dto.OrderRequestDto;
+import shoppingcart.dto.OrdersDto;
 import shoppingcart.dto.ProductDto;
 import shoppingcart.exception.InvalidOrderException;
 
@@ -34,25 +34,18 @@ public class OrderService {
 
     public Long addOrder(final List<OrderRequestDto> orderDetailRequests, final String customerName) {
         final Long customerId = customerDao.findIdByUserName(customerName);
-        final Long orderId = orderDao.addOrders(customerId);
-
-        for (final OrderDetailDto orderDetail : getOrdersDetails(orderDetailRequests)) {
-            ordersDetailDao.addOrdersDetail(orderId, orderDetail);
-        }
+        final Long ordersId = orderDao.addOrders(customerId);
 
         for (final OrderRequestDto orderDetail : orderDetailRequests) {
-            cartItemDao.deleteCartItem(orderDetail.getCartId());
-        }
-        return orderId;
-    }
+            final Long cartId = orderDetail.getCartId();
+            final Long productId = cartItemDao.findProductIdById(cartId);
+            final int quantity = orderDetail.getQuantity();
 
-    private List<OrderDetailDto> getOrdersDetails(final List<OrderRequestDto> orderRequestDtos) {
-        final List<OrderDetailDto> ordersDetails = new ArrayList<>();
-        for (final OrderRequestDto ordersDetail : orderRequestDtos) {
-            final Long productId = cartItemDao.findProductIdById(ordersDetail.getCartId());
-            ordersDetails.add(new OrderDetailDto(productId, ordersDetail.getQuantity()));
+            ordersDetailDao.addOrdersDetail(ordersId, productId, quantity);
+            cartItemDao.deleteCartItem(cartId);
         }
-        return ordersDetails;
+
+        return ordersId;
     }
 
     public OrdersDto findOrderById(final String customerName, final Long orderId) {
@@ -78,13 +71,13 @@ public class OrderService {
     }
 
     private OrdersDto findOrderResponseDtoByOrderId(final Long orderId) {
-        final List<OrderDetailDto> ordersDetails = ordersDetailDao.findOrdersDetailsByOrderId(orderId);
-
-        final List<OrderDetailDto> orderDetailResponses = new ArrayList<>();
-        for (final OrderDetailDto ordersDetail : ordersDetails) {
-            final ProductDto product = productDao.findProductById(ordersDetail.getProductId());
-            orderDetailResponses.add(new OrderDetailDto(product, ordersDetail.getQuantity()));
+        final List<OrderDetailDto> ordersDetails = new ArrayList<>();
+        for (final OrderDetailDto productQuantity : ordersDetailDao.findOrdersDetailsByOrderId(orderId)) {
+            final ProductDto product = productDao.findProductById(productQuantity.getProductId());
+            final int quantity = productQuantity.getQuantity();
+            ordersDetails.add(new OrderDetailDto(product, quantity));
         }
-        return new OrdersDto(orderId, orderDetailResponses);
+
+        return new OrdersDto(orderId, ordersDetails);
     }
 }

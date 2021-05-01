@@ -36,7 +36,7 @@ public class ProductDao {
     }
 
     public ProductDto findProductById(final Long productId) {
-        try{
+        try {
             final String query = "SELECT name, price, image_url FROM product WHERE id = ?";
             return jdbcTemplate.queryForObject(query, (resultSet, rowNumber) ->
                     new ProductDto(
@@ -45,7 +45,7 @@ public class ProductDao {
                             resultSet.getString("image_url")
                     ), productId
             );
-        }catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             throw new InvalidProductException();
         }
     }

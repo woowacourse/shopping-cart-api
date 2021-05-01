@@ -17,15 +17,15 @@ public class OrdersDetailDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Long addOrdersDetail(final Long ordersId, final OrderDetailDto ordersDetail) {
+    public Long addOrdersDetail(final Long ordersId, final Long productId, final int quantity) {
         final String sql = "INSERT INTO orders_detail (orders_id, product_id, quantity) VALUES (?, ?, ?)";
         final KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(con -> {
             PreparedStatement preparedStatement = con.prepareStatement(sql, new String[]{"id"});
             preparedStatement.setLong(1, ordersId);
-            preparedStatement.setLong(2, ordersDetail.getProductId());
-            preparedStatement.setLong(3, ordersDetail.getQuantity());
+            preparedStatement.setLong(2, productId);
+            preparedStatement.setLong(3, quantity);
             return preparedStatement;
         }, keyHolder);
         return keyHolder.getKey().longValue();
