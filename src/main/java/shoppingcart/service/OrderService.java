@@ -4,7 +4,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shoppingcart.dao.*;
 import shoppingcart.dto.OrderDetailDto;
-import shoppingcart.dto.OrderDto;
+import shoppingcart.dto.OrdersDto;
+import shoppingcart.dto.OrderRequestDto;
 import shoppingcart.dto.ProductDto;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class OrderService {
         this.productDao = productDao;
     }
 
-    public Long addOrder(final List<OrderDetailDto> orderDetailRequests, final String customerName) {
+    public Long addOrder(final List<OrderRequestDto> orderDetailRequests, final String customerName) {
         final Long customerId = customerDao.findIdByUserName(customerName);
         final Long orderId = orderDao.addOrders(customerId);
 
@@ -38,22 +39,22 @@ public class OrderService {
             ordersDetailDao.addOrdersDetail(orderId, orderDetail);
         }
 
-        for (final OrderDetailDto orderDetail : orderDetailRequests) {
+        for (final OrderRequestDto orderDetail : orderDetailRequests) {
             cartItemDao.deleteCartItem(orderDetail.getCartId());
         }
         return orderId;
     }
 
-    private List<OrderDetailDto> getOrdersDetails(final List<OrderDetailDto> orderDetailRequests) {
+    private List<OrderDetailDto> getOrdersDetails(final List<OrderRequestDto> orderRequestDtos) {
         final List<OrderDetailDto> ordersDetails = new ArrayList<>();
-        for (final OrderDetailDto ordersDetail : orderDetailRequests) {
+        for (final OrderRequestDto ordersDetail : orderRequestDtos) {
             final Long productId = cartItemDao.findProductIdById(ordersDetail.getCartId());
             ordersDetails.add(new OrderDetailDto(productId, ordersDetail.getQuantity()));
         }
         return ordersDetails;
     }
 
-    public OrderDto findOrderById(final String customerName, final Long orderId) {
+    public OrdersDto findOrderById(final String customerName, final Long orderId) {
         validateOrderIdByCustomerName(customerName, orderId);
         return findOrderResponseDtoByOrderId(orderId);
     }
@@ -66,7 +67,7 @@ public class OrderService {
         }
     }
 
-    public List<OrderDto> findOrdersByCustomerName(final String customerName) {
+    public List<OrdersDto> findOrdersByCustomerName(final String customerName) {
         final Long customerId = customerDao.findIdByUserName(customerName);
         final List<Long> orderIds = orderDao.findOrderIdsByCustomerId(customerId);
 
@@ -75,7 +76,7 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    private OrderDto findOrderResponseDtoByOrderId(final Long orderId) {
+    private OrdersDto findOrderResponseDtoByOrderId(final Long orderId) {
         final List<OrderDetailDto> ordersDetails = ordersDetailDao.findOrdersDetailsByOrderId(orderId);
 
         final List<OrderDetailDto> orderDetailResponses = new ArrayList<>();
@@ -83,6 +84,6 @@ public class OrderService {
             final ProductDto product = productDao.findProductById(ordersDetail.getProductId());
             orderDetailResponses.add(new OrderDetailDto(product, ordersDetail.getQuantity()));
         }
-        return new OrderDto(orderId, orderDetailResponses);
+        return new OrdersDto(orderId, orderDetailResponses);
     }
 }

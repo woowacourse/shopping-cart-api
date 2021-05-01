@@ -5,13 +5,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import shoppingcart.dto.OrderDetailDto;
-import shoppingcart.dto.OrderDto;
+import shoppingcart.dto.OrdersDto;
 import shoppingcart.service.OrderService;
 
 import java.util.Arrays;
@@ -73,7 +72,7 @@ public class OrderControllerTest {
         // given
         final String customerName = "pobi";
         final Long orderId = 1L;
-        final OrderDto expected = new OrderDto(orderId,
+        final OrdersDto expected = new OrdersDto(orderId,
                 Arrays.asList(new OrderDetailDto(2L, 1_000, "banana", "imageUrl", 2)));
 
         when(orderService.findOrderById(customerName, orderId))
@@ -96,10 +95,10 @@ public class OrderControllerTest {
     void findOrders() throws Exception {
         // given
         final String customerName = "pobi";
-        final List<OrderDto> expected = Arrays.asList(
-                new OrderDto(1L, Arrays.asList(
+        final List<OrdersDto> expected = Arrays.asList(
+                new OrdersDto(1L, Arrays.asList(
                         new OrderDetailDto(1L, 1_000, "banana", "imageUrl", 2))),
-                new OrderDto(2L, Arrays.asList(
+                new OrdersDto(2L, Arrays.asList(
                         new OrderDetailDto(2L, 2_000, "apple", "imageUrl2", 4)))
         );
 

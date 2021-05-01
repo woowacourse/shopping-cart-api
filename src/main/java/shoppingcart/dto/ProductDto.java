@@ -20,7 +20,6 @@ public class ProductDto {
     public ProductDto() {
     }
 
-
     public ProductDto(final Long productId, final String name, final int price, final String imageUrl) {
         this.productId = productId;
         this.name = name;
