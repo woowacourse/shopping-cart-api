@@ -1,9 +1,11 @@
 package shoppingcart.dao;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 import shoppingcart.dto.ProductDto;
+import shoppingcart.exception.InvalidProductException;
 
 import java.sql.PreparedStatement;
 import java.util.List;
@@ -34,14 +36,18 @@ public class ProductDao {
     }
 
     public ProductDto findProductById(final Long productId) {
-        final String query = "SELECT name, price, image_url FROM product WHERE id = ?";
-        return jdbcTemplate.queryForObject(query, (resultSet, rowNumber) ->
-                new ProductDto(
-                        productId,
-                        resultSet.getString("name"), resultSet.getInt("price"),
-                        resultSet.getString("image_url")
-                ), productId
-        );
+        try{
+            final String query = "SELECT name, price, image_url FROM product WHERE id = ?";
+            return jdbcTemplate.queryForObject(query, (resultSet, rowNumber) ->
+                    new ProductDto(
+                            productId,
+                            resultSet.getString("name"), resultSet.getInt("price"),
+                            resultSet.getString("image_url")
+                    ), productId
+            );
+        }catch (EmptyResultDataAccessException e){
+            throw new InvalidProductException();
+        }
     }
 
     public List<ProductDto> findProducts() {

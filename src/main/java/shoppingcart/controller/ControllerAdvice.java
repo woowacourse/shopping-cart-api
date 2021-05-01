@@ -1,65 +1,55 @@
 package shoppingcart.controller;
 
-import jdk.jfr.Experimental;
-import org.springframework.http.HttpStatus;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import shoppingcart.dao.InvalidCustomerNameException;
-import shoppingcart.exception.InvalidProductException;
-import shoppingcart.exception.NotInCustomerCartItemException;
+import shoppingcart.exception.*;
 
 import javax.validation.ConstraintViolationException;
+import java.util.List;
 
 @RestControllerAdvice
 public class ControllerAdvice {
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<String> handle(final HttpMessageNotReadableException e) {
-        return new ResponseEntity<>(
-                e.getMessage(),
-                HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity handleUnhandledException() {
+        return ResponseEntity.badRequest().body("Unhandled Exception");
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handle(final MethodArgumentNotValidException e) {
-        return new ResponseEntity<>(
-                e.getMessage(),
-                HttpStatus.BAD_REQUEST
-        );
+    @ExceptionHandler(EmptyResultDataAccessException.class)
+    public ResponseEntity handle() {
+        return ResponseEntity.badRequest().body("존재하지 않는 데이터 요청입니다.");
     }
 
-    @ExceptionHandler(InvalidCustomerNameException.class)
-    public ResponseEntity<String> handle(final InvalidCustomerNameException e) {
-        return new ResponseEntity<>(
-                e.getMessage(),
-                HttpStatus.BAD_REQUEST
-        );
+    @ExceptionHandler({MethodArgumentNotValidException.class})
+    public ResponseEntity handleInvalidRequest(final BindingResult bindingResult) {
+        final List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+        final FieldError mainError = fieldErrors.get(0);
+
+        return ResponseEntity.badRequest().body(mainError.getDefaultMessage());
     }
 
-    @ExceptionHandler(InvalidProductException.class)
-    public ResponseEntity<String> handle(final InvalidProductException e) {
-        return new ResponseEntity<>(
-                e.getMessage(),
-                HttpStatus.BAD_REQUEST
-        );
+    @ExceptionHandler({
+            HttpMessageNotReadableException.class,
+            ConstraintViolationException.class,
+    })
+    public ResponseEntity handleInvalidRequest(final RuntimeException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 
-    @ExceptionHandler(NotInCustomerCartItemException.class)
-    public ResponseEntity<String> handle(final NotInCustomerCartItemException e) {
-        return new ResponseEntity<>(
-                e.getMessage(),
-                HttpStatus.BAD_REQUEST
-        );
-    }
-
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<String> handle(final ConstraintViolationException e) {
-        return new ResponseEntity<>(
-                e.getMessage(),
-                HttpStatus.BAD_REQUEST
-        );
+    @ExceptionHandler({
+            InvalidCustomerException.class,
+            InvalidCartItemException.class,
+            InvalidProductException.class,
+            InvalidOrderException.class,
+            NotInCustomerCartItemException.class,
+    })
+    public ResponseEntity handleInvalidAccess(final RuntimeException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 }

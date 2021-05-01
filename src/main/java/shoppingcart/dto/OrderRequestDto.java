@@ -1,8 +1,12 @@
 package shoppingcart.dto;
 
-public class OrderRequestDto {
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
+public class OrderRequestDto {
+    @NotNull
     private final Long cartId;
+    @Min(0)
     private final int quantity;
 
     public OrderRequestDto(final Long cartId, final int quantity) {

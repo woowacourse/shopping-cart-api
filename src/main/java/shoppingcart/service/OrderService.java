@@ -7,6 +7,7 @@ import shoppingcart.dto.OrderDetailDto;
 import shoppingcart.dto.OrdersDto;
 import shoppingcart.dto.OrderRequestDto;
 import shoppingcart.dto.ProductDto;
+import shoppingcart.exception.InvalidOrderException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +64,7 @@ public class OrderService {
         final Long customerId = customerDao.findIdByUserName(customerName);
 
         if (!orderDao.isValidOrderId(customerId, orderId)) {
-            throw new RuntimeException("유저에게는 해당 order_id가 없습니다.");
+            throw new InvalidOrderException("유저에게는 해당 order_id가 없습니다.");
         }
     }
 

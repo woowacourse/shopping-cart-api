@@ -49,20 +49,20 @@ public class CartService {
         try {
             return cartItemDao.addCartItem(customerId, productId);
         } catch (Exception e) {
-            throw new InvalidProductException("올바르지 않은 사용자 이름이거나 상품 아이디 입니다.");
+            throw new InvalidProductException();
         }
     }
 
     public void deleteCart(final String customerName, final Long cartId) {
-        final List<Long> cartIds = findCartIdsByCustomerName(customerName);
-        validateCustomerCart(cartId, cartIds);
+        validateCustomerCart(cartId, customerName);
         cartItemDao.deleteCartItem(cartId);
     }
 
-    private void validateCustomerCart(final Long cartId, final List<Long> cartIds) {
+    private void validateCustomerCart(final Long cartId, final String customerName) {
+        final List<Long> cartIds = findCartIdsByCustomerName(customerName);
         if (cartIds.contains(cartId)) {
             return;
         }
-        throw new NotInCustomerCartItemException("장바구니 아이템이 없습니다.");
+        throw new NotInCustomerCartItemException();
     }
 }

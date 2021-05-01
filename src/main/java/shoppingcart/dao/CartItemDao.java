@@ -1,9 +1,11 @@
 package shoppingcart.dao;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import shoppingcart.exception.InvalidCartItemException;
 
 import java.sql.PreparedStatement;
 import java.util.List;
@@ -29,9 +31,12 @@ public class CartItemDao {
     }
 
     public Long findProductIdById(final Long cartId) {
-        final String sql = "SELECT product_id FROM cart_item WHERE id = ?";
-
-        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> rs.getLong("product_id"), cartId);
+        try {
+            final String sql = "SELECT product_id FROM cart_item WHERE id = ?";
+            return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> rs.getLong("product_id"), cartId);
+        } catch (EmptyResultDataAccessException e) {
+            throw new InvalidCartItemException();
+        }
     }
 
     public Long addCartItem(final Long customerId, final Long productId) {
@@ -50,9 +55,9 @@ public class CartItemDao {
     public void deleteCartItem(final Long id) {
         final String sql = "DELETE FROM cart_item WHERE id = ?";
 
-        int rowCount = jdbcTemplate.update(sql, id);
+        final int rowCount = jdbcTemplate.update(sql, id);
         if (rowCount == 0) {
-            throw new IllegalArgumentException();
+            throw new InvalidCartItemException();
         }
     }
 }
