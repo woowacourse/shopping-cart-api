@@ -5,6 +5,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import shoppingcart.exception.InvalidCustomerException;
 
+import java.util.Locale;
+
 @Repository
 public class CustomerDao {
 
@@ -17,7 +19,7 @@ public class CustomerDao {
     public Long findIdByUserName(final String userName) {
         try {
             final String query = "SELECT id FROM CUSTOMER WHERE username = ?";
-            return jdbcTemplate.queryForObject(query, Long.class, userName);
+            return jdbcTemplate.queryForObject(query, Long.class, userName.toLowerCase(Locale.ROOT));
         } catch (final EmptyResultDataAccessException e) {
             throw new InvalidCustomerException();
         }
