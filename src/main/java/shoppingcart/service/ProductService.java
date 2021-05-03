@@ -8,7 +8,7 @@ import shoppingcart.dto.ProductDto;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class ProductService {
     private final ProductDao productDao;
 
