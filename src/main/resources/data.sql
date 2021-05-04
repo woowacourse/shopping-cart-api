@@ -24,4 +24,4 @@ values ('puterism'),
        ('2sooy'),
        ('yujo11'),
        ('sunhpark42')
-       ;
+;
