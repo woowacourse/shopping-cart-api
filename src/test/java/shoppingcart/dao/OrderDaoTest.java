@@ -1,8 +1,5 @@
 package shoppingcart.dao;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -11,6 +8,10 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.jdbc.Sql;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @JdbcTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
@@ -30,10 +31,10 @@ class OrderDaoTest {
     @Test
     void addOrders() {
         //given
-        Long customerId = 1L;
+        final Long customerId = 1L;
 
         //when
-        Long orderId = orderDao.addOrders(customerId);
+        final Long orderId = orderDao.addOrders(customerId);
 
         //then
         assertThat(orderId).isNotNull();
@@ -43,12 +44,12 @@ class OrderDaoTest {
     @Test
     void findOrderIdsByCustomerId() {
         //given
-        Long customerId = 1L;
+        final Long customerId = 1L;
         jdbcTemplate.update("INSERT INTO ORDERS (customer_id) VALUES (?)", customerId);
         jdbcTemplate.update("INSERT INTO ORDERS (customer_id) VALUES (?)", customerId);
 
         //when
-        List<Long> orderIdsByCustomerId = orderDao.findOrderIdsByCustomerId(customerId);
+        final List<Long> orderIdsByCustomerId = orderDao.findOrderIdsByCustomerId(customerId);
 
         //then
         assertThat(orderIdsByCustomerId).hasSize(2);

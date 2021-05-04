@@ -5,61 +5,64 @@ import org.springframework.transaction.annotation.Transactional;
 import shoppingcart.dao.CartItemDao;
 import shoppingcart.dao.CustomerDao;
 import shoppingcart.dao.ProductDao;
-import shoppingcart.dto.CartResponseDto;
-import shoppingcart.dto.Product;
-import shoppingcart.exception.InvalidAddCartInputException;
+import shoppingcart.dto.CartDto;
+import shoppingcart.dto.ProductDto;
+import shoppingcart.exception.InvalidProductException;
 import shoppingcart.exception.NotInCustomerCartItemException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class CartService {
 
     private final CartItemDao cartItemDao;
     private final CustomerDao customerDao;
     private final ProductDao productDao;
 
-    public CartService(CartItemDao cartItemDao, CustomerDao customerDao, ProductDao productDao) {
+    public CartService(final CartItemDao cartItemDao, final CustomerDao customerDao, final ProductDao productDao) {
         this.cartItemDao = cartItemDao;
         this.customerDao = customerDao;
         this.productDao = productDao;
     }
 
-    public List<CartResponseDto> findCartsByCustomerName(final String customerName) {
-        final Long customerId = customerDao.findIdByUserName(customerName);
-        final List<Long> cartIds = cartItemDao.findIdsByCustomerId(customerId);
+    public List<CartDto> findCartsByCustomerName(final String customerName) {
+        final List<Long> cartIds = findCartIdsByCustomerName(customerName);
 
-        final List<CartResponseDto> cartResponseDtos = new ArrayList<>();
+        final List<CartDto> cartDtos = new ArrayList<>();
         for (final Long cartId : cartIds) {
             final Long productId = cartItemDao.findProductIdById(cartId);
-            final Product product = productDao.findProductById(productId);
-            cartResponseDtos.add(new CartResponseDto(cartId, product));
+            final ProductDto product = productDao.findProductById(productId);
+            cartDtos.add(new CartDto(cartId, product));
         }
-        return cartResponseDtos;
+        return cartDtos;
     }
 
-    public long addCart(long productId, String customerName) {
-        Long customerId = customerDao.findIdByUserName(customerName);
+    private List<Long> findCartIdsByCustomerName(final String customerName) {
+        final Long customerId = customerDao.findIdByUserName(customerName);
+        return cartItemDao.findIdsByCustomerId(customerId);
+    }
+
+    public Long addCart(final Long productId, final String customerName) {
+        final Long customerId = customerDao.findIdByUserName(customerName);
         try {
             return cartItemDao.addCartItem(customerId, productId);
         } catch (Exception e) {
-            throw new InvalidAddCartInputException("올바르지 않은 사용자 이름이거나 상품 아이디 입니다.");
+            throw new InvalidProductException();
         }
     }
 
-    public void deleteCart(String customerName, long cartId) {
-        List<CartResponseDto> cartResponseDtos = findCartsByCustomerName(customerName);
-        validateCustomerCart(cartId, cartResponseDtos);
+    public void deleteCart(final String customerName, final Long cartId) {
+        validateCustomerCart(cartId, customerName);
         cartItemDao.deleteCartItem(cartId);
     }
 
-    private void validateCustomerCart(long cartId, List<CartResponseDto> cartResponseDtos) {
-        cartResponseDtos.stream()
-                .mapToLong(CartResponseDto::getCartId)
-                .filter(cartDtoId -> cartDtoId == cartId)
-                .findAny()
-                .orElseThrow(() -> new NotInCustomerCartItemException("해당 고객의 장바구니 아이템이 아닙니다."));
+    private void validateCustomerCart(final Long cartId, final String customerName) {
+        final List<Long> cartIds = findCartIdsByCustomerName(customerName);
+        if (cartIds.contains(cartId)) {
+            return;
+        }
+        throw new NotInCustomerCartItemException();
     }
 }

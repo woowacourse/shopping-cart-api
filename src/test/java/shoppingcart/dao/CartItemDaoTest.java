@@ -1,8 +1,5 @@
 package shoppingcart.dao;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +9,11 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.jdbc.Sql;
-import shoppingcart.dto.ProductRequestDto;
+import shoppingcart.dto.ProductDto;
+
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @JdbcTest
 @AutoConfigureTestDatabase(replace = Replace.NONE)
@@ -31,23 +32,23 @@ public class CartItemDaoTest {
 
     @BeforeEach
     void setUp() {
-        productDao.save(new ProductRequestDto("banana", 1_000, "woowa1.com"));
-        productDao.save(new ProductRequestDto("apple", 2_000, "woowa2.com"));
+        productDao.save(new ProductDto("banana", 1_000, "woowa1.com"));
+        productDao.save(new ProductDto("apple", 2_000, "woowa2.com"));
 
-        jdbcTemplate.update( "INSERT INTO cart_item(customer_id, product_id) VALUES(?, ?)", 1L, 1L);
-        jdbcTemplate.update( "INSERT INTO cart_item(customer_id, product_id) VALUES(?, ?)", 1L, 2L);
+        jdbcTemplate.update("INSERT INTO cart_item(customer_id, product_id) VALUES(?, ?)", 1L, 1L);
+        jdbcTemplate.update("INSERT INTO cart_item(customer_id, product_id) VALUES(?, ?)", 1L, 2L);
     }
 
     @DisplayName("카트에 아이템을 담으면, 담긴 카트 아이디를 반환한다. ")
     @Test
-    void addCartItem(){
+    void addCartItem() {
 
         // given
-        long customerId = 1L;
-        long productId = 1L;
+        final Long customerId = 1L;
+        final Long productId = 1L;
 
         // when
-        long cartId = cartItemDao.addCartItem(customerId, productId);
+        final Long cartId = cartItemDao.addCartItem(customerId, productId);
 
         // then
         assertThat(cartId).isEqualTo(3L);
@@ -58,7 +59,7 @@ public class CartItemDaoTest {
     void findProductIdsByCustomerId() {
 
         // given
-        long customerId = 1L;
+        final Long customerId = 1L;
 
         // when
         final List<Long> productsIds = cartItemDao.findProductIdsByCustomerId(customerId);
@@ -72,7 +73,7 @@ public class CartItemDaoTest {
     void findIdsByCustomerId() {
 
         // given
-        long customerId = 1L;
+        final Long customerId = 1L;
 
         // when
         final List<Long> cartIds = cartItemDao.findIdsByCustomerId(customerId);
@@ -86,14 +87,15 @@ public class CartItemDaoTest {
     void deleteCartItem() {
 
         // given
-        long cartId = 1L;
+        final Long cartId = 1L;
 
         // when
         cartItemDao.deleteCartItem(cartId);
 
         // then
-        long customerId = 1L;
+        final Long customerId = 1L;
         final List<Long> productIds = cartItemDao.findProductIdsByCustomerId(customerId);
+
         assertThat(productIds).containsExactly(2L);
     }
 }

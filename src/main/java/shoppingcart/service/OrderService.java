@@ -1,22 +1,20 @@
 package shoppingcart.service;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import shoppingcart.dao.CartItemDao;
-import shoppingcart.dao.CustomerDao;
-import shoppingcart.dao.OrderDao;
-import shoppingcart.dao.OrdersDetailDao;
-import shoppingcart.dao.ProductDao;
-import shoppingcart.dto.OrderDetailRequestDto;
-import shoppingcart.dto.OrderDetailResponseDto;
-import shoppingcart.dto.OrderResponseDto;
-import shoppingcart.dto.OrdersDetail;
-import shoppingcart.dto.Product;
+import shoppingcart.dao.*;
+import shoppingcart.dto.OrderDetailDto;
+import shoppingcart.dto.OrderRequestDto;
+import shoppingcart.dto.OrdersDto;
+import shoppingcart.dto.ProductDto;
+import shoppingcart.exception.InvalidOrderException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class OrderService {
 
     private final OrderDao orderDao;
@@ -25,8 +23,8 @@ public class OrderService {
     private final CustomerDao customerDao;
     private final ProductDao productDao;
 
-    public OrderService(OrderDao orderDao, OrdersDetailDao ordersDetailDao,
-                        CartItemDao cartItemDao, CustomerDao customerDao, ProductDao productDao) {
+    public OrderService(final OrderDao orderDao, final OrdersDetailDao ordersDetailDao,
+                        final CartItemDao cartItemDao, final CustomerDao customerDao, final ProductDao productDao) {
         this.orderDao = orderDao;
         this.ordersDetailDao = ordersDetailDao;
         this.cartItemDao = cartItemDao;
@@ -34,74 +32,52 @@ public class OrderService {
         this.productDao = productDao;
     }
 
-    // 주문 추가
-    public Long addOrder(List<OrderDetailRequestDto> orderDetailRequests, String customerName) {
-        Long customerId = customerDao.findIdByUserName(customerName);
+    public Long addOrder(final List<OrderRequestDto> orderDetailRequests, final String customerName) {
+        final Long customerId = customerDao.findIdByUserName(customerName);
+        final Long ordersId = orderDao.addOrders(customerId);
 
-        // 상품 id, quantity 매칭
-        List<OrdersDetail> ordersDetails = new ArrayList<>();
-        for (OrderDetailRequestDto ordersDetail : orderDetailRequests) {
-            // cartId 가 없으면 예외 발생
-            Long productId = cartItemDao.findProductIdById(ordersDetail.getCartId());
-            ordersDetails.add(new OrdersDetail(productId, ordersDetail.getQuantity()));
+        for (final OrderRequestDto orderDetail : orderDetailRequests) {
+            final Long cartId = orderDetail.getCartId();
+            final Long productId = cartItemDao.findProductIdById(cartId);
+            final int quantity = orderDetail.getQuantity();
+
+            ordersDetailDao.addOrdersDetail(ordersId, productId, quantity);
+            cartItemDao.deleteCartItem(cartId);
         }
 
-        // 주문, 주문상세 생성
-        Long orderId = orderDao.addOrders(customerId);
-        for (OrdersDetail orderDetail : ordersDetails) {
-            ordersDetailDao.addOrdersDetail(orderId, orderDetail);
-        }
-
-        // 장바구니 삭제
-        for (OrderDetailRequestDto orderDetail : orderDetailRequests) {
-            cartItemDao.deleteCartItem(orderDetail.getCartId());
-        }
-
-        return orderId;
+        return ordersId;
     }
 
-    // 주문 상세
-    public OrderResponseDto findOrderById(String customerName, long orderId) {
+    public OrdersDto findOrderById(final String customerName, final Long orderId) {
         validateOrderIdByCustomerName(customerName, orderId);
         return findOrderResponseDtoByOrderId(orderId);
     }
 
-    private void validateOrderIdByCustomerName(String customerName, long orderId) {
+    private void validateOrderIdByCustomerName(final String customerName, final Long orderId) {
+        final Long customerId = customerDao.findIdByUserName(customerName);
 
-        // cusrtomerName이 없을 경우 에외 발생
-        Long customerId = customerDao.findIdByUserName(customerName);
-
-        // customerId 와 orderId를 동시에 만족하는 row가 없을 경우 403 발생
         if (!orderDao.isValidOrderId(customerId, orderId)) {
-            throw new RuntimeException("유저에게는 해당 order_id가 없습니다.");
+            throw new InvalidOrderException("유저에게는 해당 order_id가 없습니다.");
         }
     }
 
-    // 주문 목록
-    public List<OrderResponseDto> findOrdersByCustomerName(String customerName) {
+    public List<OrdersDto> findOrdersByCustomerName(final String customerName) {
+        final Long customerId = customerDao.findIdByUserName(customerName);
+        final List<Long> orderIds = orderDao.findOrderIdsByCustomerId(customerId);
 
-        // cusrtomerName이 없을 경우 에외 발생
-        Long customerId = customerDao.findIdByUserName(customerName);
-
-        List<Long> orderIds = orderDao.findOrderIdsByCustomerId(customerId);
-
-        List<OrderResponseDto> orderResponses = new ArrayList<>();
-        for (Long orderId : orderIds) {
-            orderResponses.add(findOrderResponseDtoByOrderId(orderId));
-        }
-
-        return orderResponses;
+        return orderIds.stream()
+                .map(orderId -> findOrderResponseDtoByOrderId(orderId))
+                .collect(Collectors.toList());
     }
 
-    private OrderResponseDto findOrderResponseDtoByOrderId(long orderId) {
-        List<OrdersDetail> ordersDetails = ordersDetailDao.findOrdersDetailsByOrderId(orderId);
-
-        List<OrderDetailResponseDto> orderDetailResponses = new ArrayList<>();
-        for (OrdersDetail ordersDetail : ordersDetails) {
-            Product product = productDao.findProductById(ordersDetail.getProductId());
-            orderDetailResponses.add(new OrderDetailResponseDto(product, ordersDetail.getQuantity()));
+    private OrdersDto findOrderResponseDtoByOrderId(final Long orderId) {
+        final List<OrderDetailDto> ordersDetails = new ArrayList<>();
+        for (final OrderDetailDto productQuantity : ordersDetailDao.findOrdersDetailsByOrderId(orderId)) {
+            final ProductDto product = productDao.findProductById(productQuantity.getProductId());
+            final int quantity = productQuantity.getQuantity();
+            ordersDetails.add(new OrderDetailDto(product, quantity));
         }
 
-        return new OrderResponseDto(orderId, orderDetailResponses);
+        return new OrdersDto(orderId, ordersDetails);
     }
 }
