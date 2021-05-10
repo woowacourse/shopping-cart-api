@@ -18,7 +18,7 @@ public class CustomerDao {
 
     public Long findIdByUserName(final String userName) {
         try {
-            final String query = "SELECT id FROM CUSTOMER WHERE username = ?";
+            final String query = "SELECT id FROM customer WHERE username = ?";
             return jdbcTemplate.queryForObject(query, Long.class, userName.toLowerCase(Locale.ROOT));
         } catch (final EmptyResultDataAccessException e) {
             throw new InvalidCustomerException();
