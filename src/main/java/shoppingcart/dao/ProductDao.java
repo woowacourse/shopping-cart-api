@@ -63,7 +63,7 @@ public class ProductDao {
     }
 
     public void delete(final Long productId) {
-        final String query = "DELETE FROM PRODUCT WHERE id = ?";
+        final String query = "DELETE FROM product WHERE id = ?";
         jdbcTemplate.update(query, productId);
     }
 }
