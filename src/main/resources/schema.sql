@@ -31,7 +31,8 @@ create table cart_item
 (
     id          bigint not null auto_increment,
     customer_id bigint not null,
-    product_id  bigint not null
+    product_id  bigint not null,
+    primary key (id)
 ) engine=InnoDB default charset=utf8mb4;
 
 alter table cart_item
