@@ -9,7 +9,7 @@
 200
 [
     {
-        "id": 1,
+        "product_id": 1,
         "price": 10000,
         "name": "치킨",
         "image_url": "http://example.com/chicken.jpg"
@@ -46,7 +46,7 @@ Location: /api/products/{product_id}
 # 응답
 200
 {
-    "id": 1,
+    "product_id": 1,
     "price": 10000,
     "name": "치킨",
     "image_url": "http://example.com/chicken.jpg"
